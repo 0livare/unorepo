@@ -1,8 +1,10 @@
 # Monorepo
 
-A tool for managing a monorepo via lerna and Yarn workspaces.
+A tool for managing a mono-repo via lerna and Yarn workspaces.
 
-[Lerna] is a fantastic tool for managing mono-repos at a high level, but things go much more smoothly when allowing [Yarn workspaces] to handle the core logic of package resolution and linking at a low level. These two tools are also intended to [work together][lerna-yarn]! For that reason, Monorepo assumes that you're using both, because why wouldn't you be? :smile:
+[Lerna] is a fantastic tool for managing mono-repos at a high level, but things go much more smoothly when allowing [Yarn workspaces] to handle the core logic of package resolution and linking at a low level. These two tools are also intended to [work together][lerna-yarn], so Monorepo assumes that you're using both. Because why wouldn't you be? :smile:
+
+The purpose of Monorepo is to marry the functionality of Lerna and Yarn workspaces into one easy to use (and easier to remember!) place. Additionally, it adds some extra functionality that isn't present in either tool.
 
 Some of the commands in this utility will merely be synonyms to other commands in order to document their use and utility in a single place.
 
@@ -53,17 +55,17 @@ The overlapping terminology is very confusing, so in attempt to be as clear as p
 
 ### `monorepo watch`
 
-Watch for changes in each of the packages in the current project.
+Build a package and its dependents every time the package changes.
 
-When a change is detected in a particular package, the package will be built (i.e. the `build` script in it's `package.json` will be run), followed by each other package in the project that depends on it.
+When a change is detected in a particular package, that package will be built (i.e. the `build` script in its `package.json` will be run), and then each other package in the project that depends on the changed package will also be built. This ensures that all your packages are constantly up to date as you're developing them.
 
 ### `monoreopo bootstrap`
 
-Link packages together via symlinks, and install missing dependencies. A synonym for [`lerna bootstrap`][lerna-bootstrap], which (when using Yarn workspaces) is a [synonym][lerna-yarn] for `yarn install`.
+Link packages together via symlinks, and install missing dependencies. A synonym for [`lerna bootstrap`][lerna-bootstrap], which is a [synonym][lerna-yarn] for `yarn install`.
 
-This is useful so that when `pkg-b` depends on `pkg-a`, when you make a change to `pkg-a`, `pkg-b` immediately receives that change because it's pointing to the source files for `pkg-a`, instead of files copied into `node_modules` via a typical publish and pull method (e.g. using [yalc]).
+This linking is what allows your local packages to depend on each other directly in your file system, rather then depending on files copied into `node_modules` via a typical (and at times painful) publish and pull method (e.g. using [yalc]).
 
-Sometimes `pkg-b` might depend on source files (e.g. [S]CSS files) and other times built files (e.g. typescript compiled to javascript). If `pkg-b` depends on built files, after a change is made to `pkg-a`, `pkg-a` will need to be built in order for `pkg-b` to be properly updated. The `monorepo watch` command can be utilized to do this automatically.
+Yarn workspaces is really doing all the hard work here of resolving your dependencies and linking them together.
 
 [lerna-bootstrap]: https://github.com/lerna/lerna/tree/master/commands/bootstrap
 [yalc]: https://github.com/whitecolor/yalc
@@ -80,7 +82,7 @@ List each package in the project and the other packages that it depends on. A sy
 
 If all your packages are set up correctly, all the dependencies should be listed in the `workspaceDependencies` array, and the `mismatchedWorkspaceDependencies` arrays should all be empty.
 
-If you have a dependency in `mismatchedWorkspaceDependencies` for a particular parent-package, this means that a non-local (probably from NPM or the like) version of that dependency-package will be used when the parent-package is run. That means that if you make a local update to the dependency-package, that change will _not_ be reflected in the running parent-package.
+If you have a dependency in `mismatchedWorkspaceDependencies` for a particular parent-package, this means that a non-local (probably from NPM or the like) version of that dependency-package will be used when the parent-package is run. So when you then make a local update to the dependency-package, that change will _not_ be reflected in the running parent-package.
 
 The usual cause of this problem is mismatched version numbers. Ensure that the version number listed in the `package.json#version` field of the dependency-package matches the version listed in the `package.json#dependencies` section of the parent-package.
 
@@ -90,6 +92,4 @@ The usual cause of this problem is mismatched version numbers. Ensure that the v
 
 Run a package.json script in one or all packages.
 
-If the second `pkg` argument is ommitted, the `script` will be run in all packages; if it is provided, it will only be run in that particular package.
-
-Both Lerna and Yarn workspaces have similar commands, but this one (in the author's opinion at least) is slightly more convenient because it provides the Lerna functionality with less typing than either of the Lerna or Yarn options.
+If the second `pkg` argument is ommitted, the `script` will be run in all packages. If `pkg` is provided, the `script` will only be run in that particular package.

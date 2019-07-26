@@ -1,6 +1,6 @@
 {
   "name": "@zposten/monorepo",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A tool for managing a monorepo via lerna and yarn workspaces",
   "author": "Zach Posten <https://github.com/zposten>, Dom Hutton (dombo)",
   "license": "ISC",
