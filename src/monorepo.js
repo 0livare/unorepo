@@ -24,4 +24,10 @@ monorepo
   .description('Show dependencies of each yarn workspace')
   .action(require('./commands/dependencies'))
 
+monorepo
+  .command('run <script> [<pkg>]')
+  .alias('r')
+  .description('Run a package.json script in one or all packages')
+  .action(require('./commands/run'))
+
 monorepo.version('0.0.0').parse(process.argv)

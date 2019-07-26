@@ -1,8 +1,8 @@
 # Monorepo
 
-A tool for managing a monorepo via lerna and yarn workspaces.
+A tool for managing a monorepo via lerna and Yarn workspaces.
 
-[Lerna] is a fantastic tool for managing mono-repos at a high level, but things go much more smoothly when allowing [yarn workspaces] to handle the core logic of package resolution and linking at a low level. These two tools are also intended to [work together][lerna-yarn]! For that reason, Monorepo assumes that you're using both, because why wouldn't you be? :smile:
+[Lerna] is a fantastic tool for managing mono-repos at a high level, but things go much more smoothly when allowing [Yarn workspaces] to handle the core logic of package resolution and linking at a low level. These two tools are also intended to [work together][lerna-yarn]! For that reason, Monorepo assumes that you're using both, because why wouldn't you be? :smile:
 
 Some of the commands in this utility will merely be synonyms to other commands in order to document their use and utility in a single place.
 
@@ -30,7 +30,7 @@ monorepo --help
 
 ## Language
 
-Lerna and yarn workspaces have some conflicting language. Given a mono-repo of the following structure:
+Lerna and Yarn workspaces have some conflicting language. Given a mono-repo of the following structure:
 
 ```
 root
@@ -39,7 +39,7 @@ root
 │   │    └──  package.json
 │   └── bar
 │   │    └──  package.json
-│   lerna.json
+├── lerna.json
 └── package.json
 ```
 
@@ -59,7 +59,7 @@ When a change is detected in a particular package, the package will be built (i.
 
 ### `monoreopo bootstrap`
 
-Link packages together via symlinks, and install missing dependencies. A synonym for [`lerna bootstrap`][lerna-bootstrap], which (when using yarn workspaces) is a [synonym][lerna-yarn] for `yarn install`.
+Link packages together via symlinks, and install missing dependencies. A synonym for [`lerna bootstrap`][lerna-bootstrap], which (when using Yarn workspaces) is a [synonym][lerna-yarn] for `yarn install`.
 
 This is useful so that when `pkg-b` depends on `pkg-a`, when you make a change to `pkg-a`, `pkg-b` immediately receives that change because it's pointing to the source files for `pkg-a`, instead of files copied into `node_modules` via a typical publish and pull method (e.g. using [yalc]).
 
@@ -85,3 +85,11 @@ If you have a dependency in `mismatchedWorkspaceDependencies` for a particular p
 The usual cause of this problem is mismatched version numbers. Ensure that the version number listed in the `package.json#version` field of the dependency-package matches the version listed in the `package.json#dependencies` section of the parent-package.
 
 [yarn-workspaces-info]: https://yarnpkg.com/lang/en/docs/cli/workspaces/#toc-yarn-workspaces-info
+
+### `monorepo run <script> <pkg>`
+
+Run a package.json script in one or all packages.
+
+If the second `pkg` argument is ommitted, the `script` will be run in all packages; if it is provided, it will only be run in that particular package.
+
+Both Lerna and Yarn workspaces have similar commands, but this one (in the author's opinion at least) is slightly more convenient because it provides the Lerna functionality with less typing than either of the Lerna or Yarn options.
