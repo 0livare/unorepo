@@ -7,16 +7,20 @@ const findNearestNodeModule = require('./findNearestNodeModule')
  * Build the package that contains the changed file, and then
  * build each of the other packages that depends on that one.
  */
-async function buildDependencyChain(changedFilePath) {
+async function buildDependencyChain(changedFilePath, scriptToRunOnChange) {
   const changedPackagePath = findNearestNodeModule(changedFilePath)
   const changedPackageName = getPackageJson(changedPackagePath).name
 
   // First build the package that has changed
-  await buildDependency(changedPackageName)
+  await buildDependency(changedPackageName, scriptToRunOnChange)
 
   // Then build all packages that depend on the one that has changed
   const dependentPackages = await findDependentPackages(changedPackageName)
-  await Promise.all(dependentPackages.map(pkg => buildDependency(pkg.name)))
+  await Promise.all(
+    dependentPackages.map(pkg =>
+      buildDependency(pkg.name, scriptToRunOnChange),
+    ),
+  )
 }
 
 /**
@@ -43,8 +47,8 @@ async function findDependentPackages(packageName) {
   return dependentPackages
 }
 
-async function buildDependency(name) {
-  const lernaArgs = ['run', 'build', '--scope', name]
+async function buildDependency(name, scriptToRunOnChange = 'build') {
+  const lernaArgs = ['run', scriptToRunOnChange, '--scope', name]
   await execa('lerna', lernaArgs, {stdio: 'inherit'})
 }
 

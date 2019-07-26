@@ -7,10 +7,10 @@ const buildDependencyChain = require('../util/buildDependencyChain')
 /*
  * Watch for changes in each of the packages in this workspace
  */
-async function watch() {
+async function watch(cmd) {
   try {
     const packageInfo = await getPackagesInfo()
-    spawnWatcher(packageInfo)
+    createWatcher(packageInfo, cmd.script)
   } catch (error) {
     throw new Error(
       `There was a problem trying to watch the workspace: ${error}`,
@@ -40,7 +40,7 @@ async function getPackagesInfo() {
   }
 }
 
-async function spawnWatcher(packagesInfo) {
+async function createWatcher(packagesInfo, scriptToRunOnChange) {
   logger.logArr(
     'Watching the following packages:',
     packagesInfo.map(pkg => pkg.name),
@@ -64,15 +64,15 @@ async function spawnWatcher(packagesInfo) {
   return watcher
     .on('add', path => {
       logger.blue(`File ${path} has been added`)
-      buildDependencyChain(path)
+      buildDependencyChain(path, scriptToRunOnChange)
     })
     .on('change', path => {
       logger.blue(`File ${path} has been changed`)
-      buildDependencyChain(path)
+      buildDependencyChain(path, scriptToRunOnChange)
     })
     .on('unlink', path => {
       logger.blue(`File ${path} has been removed`)
-      buildDependencyChain(path)
+      buildDependencyChain(path, scriptToRunOnChange)
     })
 }
 
