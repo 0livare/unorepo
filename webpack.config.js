@@ -1,13 +1,15 @@
 const webpack = require('webpack')
-var nodeExternals = require('webpack-node-externals')
+const nodeExternals = require('webpack-node-externals')
+
+const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = {
-  mode: 'none', // "none" for debugging
+  mode: isProd ? 'production' : 'development',
   entry: ['./node_modules/regenerator-runtime/runtime', './src/monorepo.js'],
   target: 'node',
   externals: [nodeExternals()],
   output: {
-    path: __dirname + '/lib',
+    path: __dirname + '/dist',
     filename: 'monorepo.js',
   },
   module: {

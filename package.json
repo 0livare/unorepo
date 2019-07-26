@@ -6,14 +6,17 @@
   "license": "ISC",
   "main": "src/monorepo.js",
   "bin": {
-    "monorepo": "lib/monorepo.js"
+    "monorepo": "dist/monorepo.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "rm -rf lib/*",
-    "build": "webpack --config ./webpack.config.js",
-    "postbuild": "chmod +x lib/monorepo.js",
-    "watch": "chokidar \"src/**/*.js\" -c \"yarn build\" --initial"
+    "execute": "chmod +x dist/monorepo.js",
+    "build": "webpack",
+    "postbuild": "yarn execute",
+    "watch": "chokidar \"src/**/*.js\" -c \"yarn build\" --initial",
+    "preprod": "rm -rf dist/*",
+    "prod": "NODE_ENV=production webpack",
+    "postprod": "yarn execute",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "chokidar": "^2.0.4",
