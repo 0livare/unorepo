@@ -5,9 +5,13 @@
   "author": "Zach Posten <https://github.com/zposten>, Dom Hutton (dombo)",
   "license": "ISC",
   "main": "src/monorepo.js",
+  "private": false,
   "bin": {
     "monorepo": "dist/monorepo.js"
   },
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "execute": "chmod +x dist/monorepo.js",
     "build": "webpack",
