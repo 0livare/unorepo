@@ -1,7 +1,9 @@
 {
-  "name": "@zposten/mono",
+  "name": "@zposten/monorepo",
   "version": "0.0.1",
-  "description": "A util for managing the monorepo via lerna and yarn workspaces",
+  "description": "A utility for managing a monorepo via lerna and yarn workspaces",
+  "author": "Zach Posten <https://github.com/zposten>, Dom Hutton (dombo)",
+  "license": "ISC",
   "main": "src/monorepo.js",
   "bin": {
     "monorepo": "lib/monorepo.js"
@@ -13,8 +15,6 @@
     "postbuild": "chmod +x lib/monorepo.js",
     "watch": "chokidar \"src/**/*.js\" -c \"yarn build\" --initial"
   },
-  "author": "Zach Posten <www.github.com/zposten>, Dom Hutton (dombo)",
-  "license": "ISC",
   "dependencies": {
     "chokidar": "^2.0.4",
     "commander": "^2.19.0",
