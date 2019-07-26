@@ -1,6 +1,6 @@
 {
   "name": "@zposten/monorepo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A tool for managing a monorepo via lerna and yarn workspaces",
   "author": "Zach Posten <https://github.com/zposten>, Dom Hutton (dombo)",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "chalk": "^2.4.2",
     "chokidar": "^2.0.4",
     "commander": "^2.19.0",
     "execa": "^1.0.0"
@@ -31,7 +32,6 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
-    "chalk": "^2.4.2",
     "chokidar-cli": "^1.2.2",
     "regenerator-runtime": "^0.13.3",
     "webpack": "^4.37.0",
