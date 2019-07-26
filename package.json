@@ -1,7 +1,7 @@
 {
   "name": "@zposten/monorepo",
   "version": "0.0.1",
-  "description": "A utility for managing a monorepo via lerna and yarn workspaces",
+  "description": "A tool for managing a monorepo via lerna and yarn workspaces",
   "author": "Zach Posten <https://github.com/zposten>, Dom Hutton (dombo)",
   "license": "ISC",
   "main": "src/monorepo.js",
