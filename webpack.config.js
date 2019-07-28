@@ -5,12 +5,12 @@ const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
-  entry: ['./node_modules/regenerator-runtime/runtime', './src/monorepo.js'],
+  entry: ['./node_modules/regenerator-runtime/runtime', './src/unorepo.js'],
   target: 'node',
   externals: [nodeExternals()],
   output: {
     path: __dirname + '/dist',
-    filename: 'monorepo.js',
+    filename: 'unorepo.js',
   },
   module: {
     rules: [

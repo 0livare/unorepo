@@ -1,10 +1,10 @@
 {
-  "name": "@zposten/monorepo",
-  "version": "0.0.6",
+  "name": "unorepo",
+  "version": "0.0.1",
   "description": "A tool for managing a monorepo via lerna and yarn workspaces",
   "author": "Zach Posten <https://github.com/zposten>",
   "license": "ISC",
-  "repository": "https://github.com/zposten/monorepo",
+  "repository": "https://github.com/zposten/unorepo",
   "keywords": [
     "mono",
     "repo",
@@ -16,16 +16,16 @@
     "build",
     "watch"
   ],
-  "main": "src/monorepo.js",
+  "main": "src/unorepo.js",
   "private": false,
   "bin": {
-    "monorepo": "dist/monorepo.js"
+    "uno": "dist/unorepo.js"
   },
   "files": [
     "dist/*"
   ],
   "scripts": {
-    "execute": "chmod +x dist/monorepo.js",
+    "execute": "chmod +x dist/unorepo.js",
     "build": "webpack",
     "postbuild": "yarn execute",
     "watch": "chokidar \"src/**/*.js\" -c \"yarn build\" --initial",

@@ -1,10 +1,10 @@
-# Monorepo
+# Unorepo
 
-A tool for managing a mono-repo via Lerna and Yarn workspaces.
+A tool for managing a monorepo via Lerna and Yarn workspaces.
 
-[Lerna] is a fantastic tool for managing mono-repos at a high level, but things go more smoothly when allowing [Yarn workspaces] to handle the core logic of package resolution and linking at a low level. These two tools are also intended to [work together][lerna-yarn], so Monorepo assumes that you're using both. Because why wouldn't you be? :smile:
+[Lerna] is a fantastic tool for managing monorepos at a high level, but things go more smoothly when allowing [Yarn workspaces] to handle the core logic of package resolution and linking at a low level. These two tools are also intended to [work together][lerna-yarn], so Unorepo assumes that you're using both. Because why wouldn't you be? :smile:
 
-The purpose of Monorepo is to marry the functionality of Lerna and Yarn workspaces into one easy to use (and easier to remember!) place. Additionally, it adds some extra functionality that isn't present in either tool.
+The purpose of Unorepo is to marry the functionality of Lerna and Yarn workspaces into one easy to use (and easier to remember!) place. Additionally, it adds some extra functionality that isn't present in either tool.
 
 Some of the commands in this utility will merely be aliases to other commands in order to document their use and utility in a single place.
 
@@ -16,18 +16,18 @@ Some of the commands in this utility will merely be aliases to other commands in
 
 ```bash
 # Install with yarn
-yarn global add @zposten/monorepo
+yarn global add unorepo
 
 # Or install with npm
-npm i -g @zposten/monorepo
+npm i -g unorepo
 
-# Display the Monorepo commands
-monorepo --help
+# Display the Unorepo commands
+uno --help
 ```
 
 ## A note on language
 
-Lerna and Yarn workspaces have some conflicting language. Given a mono-repo of the following structure:
+Lerna and Yarn workspaces have some conflicting language. Given a monorepo of the following structure:
 
 ```
 root
@@ -44,21 +44,21 @@ Lerna refers to _root_ as the "lerna workspace" or "lerna repo", and to _foo_ an
 
 Yarn workspaces refers to _root_ as the "project", and to _foo_ and _bar_ as "workspaces"
 
-The overlapping terminology is very confusing, so in attempt to be as clear as possible, Monorepo will avoid the word "workspace". We will refer to `root` as the **"project"**, and `foo` and `bar` as **"packages"**.
+The overlapping terminology is very confusing, so in attempt to be as clear as possible, Unorepo will avoid the word "workspace". We will refer to `root` as the **"project"**, and `foo` and `bar` as **"packages"**.
 
 ## Commands
 
-### `monorepo watch`
+### `uno watch`
 
 Build a package and its dependents every time the package changes.
 
 When a change is detected in a particular package, that package will be built and then each other package in the project that depends on the changed package will also be built. This ensures that all your packages are constantly up to date as you're developing them.
 
-| Option           | Default | Description                                                            |
-| ---------------- | ------- | ---------------------------------------------------------------------- |
-| `--script`, `-s` | build   | The script from `package.json` Monorepo will run to build each package |
+| Option           | Default | Description                                                           |
+| ---------------- | ------- | --------------------------------------------------------------------- |
+| `--script`, `-s` | build   | The script from `package.json` Unorepo will run to build each package |
 
-### `monoreopo bootstrap`
+### `uno bootstrap`
 
 Link packages together via symlinks, and install missing dependencies. An alias for [`lerna bootstrap`][lerna-bootstrap], which is an [alias][lerna-yarn] for `yarn install`.
 
@@ -69,13 +69,13 @@ Yarn workspaces is really doing all the hard work here of resolving your depende
 [lerna-bootstrap]: https://github.com/lerna/lerna/tree/master/commands/bootstrap
 [yalc]: https://github.com/whitecolor/yalc
 
-### `monorepo list`
+### `uno list`
 
 Show information about each package, including the package's name, its version, and its relative file location within the project. An alias for [`lerna list --long`][lerna-list-long].
 
 [lerna-list-long]: https://github.com/lerna/lerna/tree/master/commands/list#--long
 
-### `monorepo dependencies`
+### `uno dependencies`
 
 List each package in the project and the other packages that it depends on. An alias for [`yarn workspaces info`][yarn-workspaces-info].
 
@@ -87,7 +87,7 @@ The usual cause of this problem is mismatched version numbers. Ensure that the v
 
 [yarn-workspaces-info]: https://yarnpkg.com/lang/en/docs/cli/workspaces/#toc-yarn-workspaces-info
 
-### `monorepo run <script> <pkg>`
+### `uno run <script> <pkg>`
 
 Run a package.json script in one or all packages.
 
@@ -102,8 +102,8 @@ If the second `pkg` argument is ommitted, the `script` will be run in all packag
 
 ```bash
 # Clone the project
-git clone https://github.com/zposten/monorepo.git
-cd monorepo
+git clone https://github.com/zposten/unorepo.git
+cd unorepo
 
 # Install dependencies
 yarn
@@ -111,11 +111,11 @@ yarn
 # Build the project
 yarn build
 
-# Allow running "monorepo" in the terminal to run this project
+# Allow running "uno" in the terminal to run this project
 yarn link
 
 # Display the options for this CLI
-monorepo --help
+uno --help
 ```
 
-> Note: If you get "permission denied" when running the `monorepo` command, run `yarn postbuild`. This can happen if the `yarn build` command exits with errors.
+> Note: If you get "permission denied" when running the `uno` command, run `yarn postbuild`. This can happen if the `yarn build` command exits with errors.

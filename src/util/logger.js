@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 
 function log(str, color = 'green') {
-  let prefix = chalk[color]('[monorepo] ')
+  let prefix = chalk[color]('[uno] ')
   console.log(`${prefix}  ${str}`)
 }
 
