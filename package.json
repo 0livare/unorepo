@@ -1,0 +1,35 @@
+{
+  "name": "@zposten/mono",
+  "version": "0.0.1",
+  "description": "A util for managing the monorepo via lerna and yarn workspaces",
+  "main": "src/monorepo.js",
+  "bin": {
+    "monorepo": "lib/monorepo.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "rm -rf lib/*",
+    "build": "webpack --config ./webpack.config.js",
+    "postbuild": "chmod +x lib/monorepo.js",
+    "watch": "chokidar \"src/**/*.js\" -c \"yarn build\" --initial"
+  },
+  "author": "Zach Posten <www.github.com/zposten>, Dom Hutton (dombo)",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^2.0.4",
+    "commander": "^2.19.0",
+    "execa": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "chalk": "^2.4.2",
+    "chokidar-cli": "^1.2.2",
+    "core-js": "3",
+    "regenerator-runtime": "^0.13.3",
+    "webpack": "^4.37.0",
+    "webpack-cli": "^3.3.6",
+    "webpack-node-externals": "^1.7.2"
+  }
+}
