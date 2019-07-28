@@ -3,11 +3,7 @@ var nodeExternals = require('webpack-node-externals')
 
 module.exports = {
   mode: 'none', // "none" for debugging
-  entry: [
-    './node_modules/core-js/stable',
-    './node_modules/regenerator-runtime/runtime',
-    './src/monorepo.js',
-  ],
+  entry: ['./node_modules/regenerator-runtime/runtime', './src/monorepo.js'],
   target: 'node',
   externals: [nodeExternals()],
   output: {
