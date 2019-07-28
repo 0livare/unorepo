@@ -9,9 +9,10 @@ unorepo
 unorepo
   .command('watch')
   .alias('w')
-  .option('-s, --script [script]', 'The script to run on change', 'build')
   .description('Run a script every time a package changes')
   .action(require('./commands/watch'))
+  .option('-s, --script <script>', 'The script to run on change', 'build')
+  .option('-x, --ext <exts>', 'The files to watch', splitList)
 
 unorepo
   .command('list')
@@ -31,4 +32,14 @@ unorepo
   .description('Run a package.json script in one or all packages')
   .action(require('./commands/run'))
 
-unorepo.version('0.0.1').parse(process.argv)
+unorepo.version('0.0.3').parse(process.argv)
+
+function splitList(list) {
+  let separators = [',', '||', '|', '*', '-', '/', '\\']
+
+  for (let separator of separators) {
+    if (list.includes(separator)) {
+      return list.split(separator)
+    }
+  }
+}

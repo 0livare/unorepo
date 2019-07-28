@@ -54,9 +54,10 @@ Build a package and its dependents every time the package changes.
 
 When a change is detected in a particular package, that package will be built and then each other package in the project that depends on the changed package will also be built. This ensures that all your packages are constantly up to date as you're developing them.
 
-| Option           | Default | Description                                                           |
-| ---------------- | ------- | --------------------------------------------------------------------- |
-| `--script`, `-s` | build   | The script from `package.json` Unorepo will run to build each package |
+| Option           | Default     | Description                                                                                        |
+| ---------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `--script`, `-s` | build       | The script from `package.json` Unorepo will run to build each package                              |
+| `--ext`, `-x`    | _ALL FILES_ | The file extensions to watch within the packages. Pass multiple separated by commas e.g. `ts,scss` |
 
 ### `uno bootstrap`
 
