@@ -12,7 +12,7 @@ unorepo
   .description('Run a script every time a package changes')
   .action(require('./commands/watch'))
   .option('-s, --script <script>', 'The script to run on change', 'build')
-  .option('-x, --ext <exts>', 'The files to watch', splitList)
+  .option('-x, --ext <exts>', 'The file extensions to watch', splitList)
 
 unorepo
   .command('list')

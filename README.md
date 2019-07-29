@@ -42,7 +42,7 @@ root
 
 Lerna refers to _root_ as the "lerna workspace" or "lerna repo", and to _foo_ and _bar_ as "packages".
 
-Yarn workspaces refers to _root_ as the "project", and to _foo_ and _bar_ as "workspaces"
+Yarn workspaces refers to _root_ as the "project", and to _foo_ and _bar_ as "workspaces".
 
 The overlapping terminology is very confusing, so in attempt to be as clear as possible, Unorepo will avoid the word "workspace". We will refer to `root` as the **"project"**, and `foo` and `bar` as **"packages"**.
 
@@ -54,10 +54,10 @@ Build a package and its dependents every time the package changes.
 
 When a change is detected in a particular package, that package will be built and then each other package in the project that depends on the changed package will also be built. This ensures that all your packages are constantly up to date as you're developing them.
 
-| Option           | Default     | Description                                                                                        |
-| ---------------- | ----------- | -------------------------------------------------------------------------------------------------- |
-| `--script`, `-s` | build       | The script from `package.json` Unorepo will run to build each package                              |
-| `--ext`, `-x`    | _ALL FILES_ | The file extensions to watch within the packages. Pass multiple separated by commas e.g. `ts,scss` |
+| Option           | Default     | Description                                                                                                         |
+| ---------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `--script`, `-s` | build       | The script from `package.json` Unorepo will run to build each package                                               |
+| `--ext`, `-x`    | _ALL FILES_ | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss` |
 
 ### `uno bootstrap`
 
