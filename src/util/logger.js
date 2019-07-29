@@ -1,7 +1,9 @@
 const chalk = require('chalk')
 
+const prefixText = '[uno] '
+
 function log(str, color = 'green') {
-  let prefix = chalk[color]('[uno] ')
+  let prefix = chalk[color](prefixText)
   console.log(`${prefix}  ${str}`)
 }
 
@@ -20,4 +22,10 @@ function blue(str) {
   log(str, 'cyan')
 }
 
-module.exports = {log, logArr, red, blue}
+function error(str) {
+  let colorPrefix = chalk.keyword('red').inverse(prefixText.trim())
+  let colorText = chalk.red(str)
+  console.log(`${colorPrefix} ${colorText}`)
+}
+
+module.exports = {log, logArr, red, blue, error}

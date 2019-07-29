@@ -13,7 +13,7 @@ async function watch(args) {
     const packageInfo = await getPackagesInfo()
     createWatcher(packageInfo, args)
   } catch (error) {
-    throw new Error(`There was a problem watching the project: ${error}`)
+    logger.error(`There was a problem watching the project: ${error}`)
   }
 }
 
@@ -85,6 +85,8 @@ async function createWatcher(packagesInfo, args) {
  * @param {Array[string]} extensions
  */
 function changeExtensionsToGlobs(extensions) {
+  if (!extensions) return null
+
   // Handle the case where only one extension was passed
   if (typeof extensions === 'string') {
     extensions = [extensions]

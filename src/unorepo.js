@@ -33,4 +33,4 @@ unorepo
   .description('Run a package.json script in one or all packages')
   .action(require('./commands/run'))
 
-unorepo.version('0.0.4').parse(process.argv)
+unorepo.version('0.0.5').parse(process.argv)
