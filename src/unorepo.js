@@ -1,4 +1,5 @@
 const unorepo = require('commander')
+const splitList = require('./util/splitList')
 
 unorepo
   .command('bootstrap')
@@ -32,14 +33,4 @@ unorepo
   .description('Run a package.json script in one or all packages')
   .action(require('./commands/run'))
 
-unorepo.version('0.0.3').parse(process.argv)
-
-function splitList(list) {
-  let separators = [',', '||', '|', '*', '-', '/', '\\']
-
-  for (let separator of separators) {
-    if (list.includes(separator)) {
-      return list.split(separator)
-    }
-  }
-}
+unorepo.version('0.0.4').parse(process.argv)

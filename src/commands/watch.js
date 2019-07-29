@@ -85,6 +85,11 @@ async function createWatcher(packagesInfo, args) {
  * @param {Array[string]} extensions
  */
 function changeExtensionsToGlobs(extensions) {
+  // Handle the case where only one extension was passed
+  if (typeof extensions === 'string') {
+    extensions = [extensions]
+  }
+
   return extensions.map(ext => {
     if (ext.startsWith('*.')) return ext
     if (ext.startsWith('.')) return '*' + ext
