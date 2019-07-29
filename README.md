@@ -59,6 +59,23 @@ When a change is detected in a particular package, that package will be built an
 | `--script`, `-s` | build       | The script from `package.json` Unorepo will run to build each package                                               |
 | `--ext`, `-x`    | _ALL FILES_ | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss` |
 
+### `uno execute`
+
+Execute an arbitrary CLI command in one or all packages.
+
+This can be any script whatsoever, e.g.
+
+```bash
+uno execute 'echo cat'
+uno execute --async 'pwd'
+```
+
+For best results, the command should be surrounded with quotes.
+
+| Option          | Default | Description                                     |
+| --------------- | ------- | ----------------------------------------------- |
+| `--async`, `-a` | false   | Run the command in every package simultaneously |
+
 ### `uno bootstrap`
 
 Link packages together via symlinks, and install missing dependencies. An alias for [`lerna bootstrap`][lerna-bootstrap], which is an [alias][lerna-yarn] for `yarn install`.

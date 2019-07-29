@@ -1,4 +1,5 @@
 const chalk = require('chalk')
+var emoji = require('node-emoji')
 
 const prefixText = '[uno] '
 
@@ -22,10 +23,22 @@ function blue(str) {
   log(str, 'cyan')
 }
 
-function error(str) {
-  let colorPrefix = chalk.keyword('red').inverse(prefixText.trim())
-  let colorText = chalk.red(str)
-  console.log(`${colorPrefix} ${colorText}`)
+function error(str, arr) {
+  expressive(str, arr, 'x', 'red')
 }
 
-module.exports = {log, logArr, red, blue, error}
+function success(str, arr) {
+  expressive(str, arr, 'white_check_mark', 'green')
+}
+
+function expressive(str, arr, emojiName, color) {
+  let colorPrefix = chalk.keyword(color).inverse(prefixText.trim())
+  // let colorText = chalk.keyword(color)(str)
+
+  console.log(`${colorPrefix} ${emoji.get(emojiName)}  ${str}`)
+
+  if (!arr) return
+  arr.forEach(item => expressive('  ' + item, null, emojiName, color))
+}
+
+module.exports = {log, logArr, red, blue, error, success}
