@@ -54,23 +54,42 @@ Build a package and its dependents every time the package changes.
 
 When a change is detected in a particular package, that package will be built and then each other package in the project that depends on the changed package will also be built. This ensures that all your packages are constantly up to date as you're developing them.
 
+```bash
+# Watch all file types for all changes, run 'yarn build' on change
+uno watch
+
+# Run 'yarn local' on change
+uno watch --script local
+
+# Watch only .ts and .scss files for change
+uno watch --ext ts,scss
+```
+
 | Option           | Default     | Description                                                                                                         |
 | ---------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
 | `--script`, `-s` | build       | The script from `package.json` Unorepo will run to build each package                                               |
 | `--ext`, `-x`    | _ALL FILES_ | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss` |
 
-### `uno execute`
+### `uno execute '<command>' [pkg]`
 
 Execute an arbitrary CLI command in one or all packages.
 
-This can be any script whatsoever, e.g.
+This can be any command that specifies a file (e.g. yarn, npm, echo, etc), followed by arguments. Shell-specific features will not work.
+
+For best results, the command should be surrounded with quotes.
+
+If the file or an argument contains spaces, they must be escaped with backslashes. This matters especially if command is not a constant but a variable, for example with `__dirname` or `process.cwd()`. Except for spaces, no escaping/quoting is needed.
 
 ```bash
 uno execute 'echo cat'
 uno execute --async 'pwd'
+uno execute 'yarn build' my-package
 ```
 
-For best results, the command should be surrounded with quotes.
+| Parameter | Required? | Default        | Description                                                               |
+| --------- | --------- | -------------- | ------------------------------------------------------------------------- |
+| `command` | true      | -              | The CLI command to run. Must be quoted, and in the form `file arguments`. |
+| `pkg`     | false     | _ALL PACKAGES_ | The name (or partial name) of the package to run `command` in.            |
 
 | Option          | Default | Description                                     |
 | --------------- | ------- | ----------------------------------------------- |
@@ -111,10 +130,20 @@ Run a package.json script in one or all packages.
 
 If the second `pkg` argument is ommitted, the `script` will be run in all packages. If `pkg` is provided, the `script` will only be run in that particular package.
 
-| Parameter | Required? | Default        | Description                                                          |
-| --------- | --------- | -------------- | -------------------------------------------------------------------- |
-| `script`  | true      | -              | The name of a script defined in the `package.json` of the package(s) |
-| `pkg`     | false     | _ALL PACKAGES_ | The name of the single package to run the script in                  |
+This command is similar to `uno execute`, but limited to predefined scripts in the package.json of each package.
+
+```bash
+# Run 'build' in all packages
+uno run build
+
+# Run 'test' in packages that start with 'button-'
+uno run test 'button-*'
+```
+
+| Parameter | Required? | Default        | Description                                                               |
+| --------- | --------- | -------------- | ------------------------------------------------------------------------- |
+| `script`  | true      | -              | The name of a script defined in the package.json of the package(s)        |
+| `pkg`     | false     | _ALL PACKAGES_ | The name of the single package to run the script in. May use glob syntax. |
 
 ## Building the project locally
 
