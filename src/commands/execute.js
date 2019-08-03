@@ -5,18 +5,19 @@ const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
 
 async function execute(command, packageName, args) {
-  if (packageName && args.async) {
+  let allPackagesInfo = await getPackagesInfo(packageName)
+
+  if (!allPackagesInfo.length) {
+    logger.error('No packages remaining after filter')
+    return
+  }
+
+  if (allPackagesInfo.length === 1 && args.async) {
     logger.error(
       `Cannot run command async in a single package (${packageName})`,
     )
     return
   }
-
-  let allPackagesInfo = (await getPackagesInfo()).filter(
-    info => !packageName || info.name.includes(packageName),
-  )
-
-  logger.log('Filter: ' + JSON.stringify(allPackagesInfo.map(i => i.name)))
 
   let ranInPackages = []
   let promises = []
