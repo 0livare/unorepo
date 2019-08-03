@@ -23,9 +23,11 @@ async function getPackagesInfo(packageName) {
     info => !packageName || info.name.includes(packageName),
   )
 
-  logger.log(
-    chalk.magenta('filter  ') + JSON.stringify(filtered.map(i => i.name)),
-  )
+  if (info.length !== filtered.length) {
+    logger.log(
+      chalk.magenta('filter  ') + JSON.stringify(filtered.map(i => i.name)),
+    )
+  }
 
   if (!filtered.length) {
     logger.error('No packages remaining after filter')
