@@ -13,7 +13,11 @@ unorepo
   .description('Run a script every time a package changes')
   .action(require('./commands/watch'))
   .option('-s, --script <script>', 'The script to run on change', 'build')
-  .option('-x, --ext <exts>', 'The file extensions to watch', splitList)
+  .option('--ext <exts>', 'The file extensions to watch', splitList)
+  .option(
+    '-x, --execute <command>',
+    'Instead of a script, run a command on change',
+  )
 
 unorepo
   .command('list')
@@ -38,6 +42,6 @@ unorepo
   .alias('x')
   .description('Run an arbitrary command in one or all packages')
   .action(require('./commands/execute'))
-  .option('-a, --async', 'Run the command in every package simultaneously')
+  .option('-p, --parallel', 'Run the command in every package simultaneously')
 
-unorepo.version('0.0.9').parse(process.argv)
+unorepo.version('0.0.13').parse(process.argv)

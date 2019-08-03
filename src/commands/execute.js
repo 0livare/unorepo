@@ -1,31 +1,28 @@
-const execa = require('execa')
 var emoji = require('node-emoji')
 
 const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
+const runCommandInPackage = require('../util/runCommandInPackage')
 
 async function execute(command, packageName, args) {
-  if (packageName && args.async) {
+  let allPackagesInfo = await getPackagesInfo(packageName)
+  if (!allPackagesInfo.length) return
+
+  if (allPackagesInfo.length === 1 && args.parallel) {
     logger.error(
-      `Cannot run command async in a single package (${packageName})`,
+      `Cannot run command in parallel in a single package (${packageName})`,
     )
     return
   }
-
-  let allPackagesInfo = (await getPackagesInfo()).filter(
-    info => !packageName || info.name.includes(packageName),
-  )
-
-  logger.log('Filter: ' + JSON.stringify(allPackagesInfo.map(i => i.name)))
 
   let ranInPackages = []
   let promises = []
 
   for (let packageInfo of allPackagesInfo) {
     try {
-      let promise = runCommand(command, packageInfo)
+      let promise = runCommandInPackage(command, packageInfo.location)
 
-      if (args.async) {
+      if (args.parallel) {
         promises.push(promise)
       } else {
         await promise
@@ -37,10 +34,10 @@ async function execute(command, packageName, args) {
     }
   }
 
-  try {
-    let successCount
+  let successCount
 
-    if (args.async) {
+  try {
+    if (args.parallel) {
       // Prevent the promises from rejecting so that Promise.all
       // waits for all of the promises to finish, regardless of
       // its success or error
@@ -57,32 +54,27 @@ async function execute(command, packageName, args) {
     } else {
       successCount = ranInPackages.length
     }
-
-    if (successCount) {
-      console.log('')
-      logger.success(
-        `Successfully ran "${command} in these ${successCount} (of ${
-          allPackagesInfo.length
-        })`,
-        ranInPackages,
-      )
-    } else {
-      logger.error('')
-      logger.error(
-        `Failed to run "${command}" in all packages ${emoji.get('cry')}`,
-      )
-      logger.error('')
-    }
   } catch (e) {
     logger.error(e)
   }
+
+  reportStatus(successCount, allPackagesInfo.length)
 }
 
-async function runCommand(command, packageInfo) {
-  return execa.command(command, {
-    cwd: packageInfo.location,
-    stdio: 'inherit',
-  })
+function reportStatus(successCount, totalCount) {
+  if (successCount) {
+    console.log('') // Print blank line
+    logger.success(
+      `Successfully ran "${command} in these ${successCount} (of ${totalCount})`,
+      ranInPackages,
+    )
+  } else {
+    logger.error('') // Print blank error line
+    logger.error(
+      `Failed to run "${command}" in all packages ${emoji.get('cry')}`,
+    )
+    logger.error('') // Print blank error line
+  }
 }
 
 module.exports = execute

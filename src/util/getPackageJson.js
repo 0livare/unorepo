@@ -1,8 +1,11 @@
 const fs = require('fs')
+const path = require('path')
 
 function getPackageJson(dir = undefined) {
-  let path = `${dir ? dir : process.cwd()}/package.json`
-  let packageJson = fs.readFileSync(path, {encoding: 'utf8'})
+  let cwd = dir || process.cwd()
+  let filePath = path.join(cwd, 'package.json')
+
+  let packageJson = fs.readFileSync(filePath, {encoding: 'utf8'})
   return JSON.parse(packageJson)
 }
 

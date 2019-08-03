@@ -18,7 +18,6 @@ async function watch(args) {
 }
 
 async function createWatcher(packagesInfo, args) {
-  let script = args.script
   let globs = changeExtensionsToGlobs(args.ext)
 
   if (globs) {
@@ -48,19 +47,27 @@ async function createWatcher(packagesInfo, args) {
     awaitWriteFinish: true, // Helps minimizing thrashing of watch events
   })
 
+  function _buildDependencyChain(changedFilePath) {
+    buildDependencyChain({
+      path: changedFilePath,
+      script: args.script,
+      command: args.execute,
+    })
+  }
+
   // Add event listeners
   return watcher
     .on('add', path => {
       logger.blue(`File ${path} was added`)
-      buildDependencyChain(path, script)
+      _buildDependencyChain(path)
     })
     .on('change', path => {
       logger.blue(`File ${path} was changed`)
-      buildDependencyChain(path, script)
+      _buildDependencyChain(path)
     })
     .on('unlink', path => {
       logger.blue(`File ${path} was removed`)
-      buildDependencyChain(path, script)
+      _buildDependencyChain(path)
     })
 }
 
