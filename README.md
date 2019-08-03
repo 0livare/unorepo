@@ -63,12 +63,16 @@ uno watch --script local
 
 # Watch only .ts and .scss files for change
 uno watch --ext ts,scss
+
+# Run a custom CLI command on change
+uno watch --execute 'yarn build && yalc push --no-sig'
 ```
 
-| Option           | Default     | Description                                                                                                         |
-| ---------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| `--script`, `-s` | build       | The script from `package.json` Unorepo will run to build each package                                               |
-| `--ext`, `-x`    | _ALL FILES_ | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss` |
+| Option            | Default     | Description                                                                                                         |
+| ----------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| `--script`, `-s`  | build       | The script from `package.json` Unorepo will run to build each package                                               |
+| `--ext`           | _ALL FILES_ | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss` |
+| `--execute`, `-x` | -           | Instead of running a predefined script on change, run an arbitrary CLI command.                                     |
 
 ### `uno execute '<command>' [pkg]`
 
@@ -82,7 +86,7 @@ If the file or an argument contains spaces, they must be escaped with backslashe
 
 ```bash
 uno execute 'echo cat'
-uno execute --async 'pwd'
+uno execute --parallel 'pwd'
 uno execute 'yarn build' my-package
 ```
 
@@ -91,9 +95,9 @@ uno execute 'yarn build' my-package
 | `command` | true      | -              | The CLI command to run. Must be quoted, and in the form `file arguments`. |
 | `pkg`     | false     | _ALL PACKAGES_ | The name (or partial name) of the package to run `command` in.            |
 
-| Option          | Default | Description                                     |
-| --------------- | ------- | ----------------------------------------------- |
-| `--async`, `-a` | false   | Run the command in every package simultaneously |
+| Option             | Default | Description                                     |
+| ------------------ | ------- | ----------------------------------------------- |
+| `--parallel`, `-p` | false   | Run the command in every package simultaneously |
 
 ### `uno bootstrap`
 

@@ -42,6 +42,6 @@ unorepo
   .alias('x')
   .description('Run an arbitrary command in one or all packages')
   .action(require('./commands/execute'))
-  .option('-a, --async', 'Run the command in every package simultaneously')
+  .option('-p, --parallel', 'Run the command in every package simultaneously')
 
 unorepo.version('0.0.9').parse(process.argv)
