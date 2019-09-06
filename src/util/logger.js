@@ -1,11 +1,11 @@
 const chalk = require('chalk')
-var emoji = require('node-emoji')
+var emojis = require('node-emoji')
 
-const prefixText = '[uno] '
+const prefixText = '[uno]'
 
-function log(str, color = 'green') {
+function log(text, color = 'green') {
   let prefix = chalk[color](prefixText)
-  console.log(`${prefix}  ${str}`)
+  console.log(`${prefix}  ${text}`)
 }
 
 function logArr(str, arr) {
@@ -23,22 +23,30 @@ function blue(str) {
   log(str, 'cyan')
 }
 
-function error(str, arr) {
-  expressive(str, arr, 'x', 'red')
+function error(text, array) {
+  expressive({text, array, emoji: 'x', prefixColorFunc: chalk.red})
 }
 
-function success(str, arr) {
-  expressive(str, arr, 'white_check_mark', 'green')
+function success(text, array) {
+  expressive({
+    text,
+    array,
+    emoji: 'white_check_mark',
+    prefixColorFunc: chalk.green,
+  })
 }
 
-function expressive(str, arr, emojiName, color) {
-  let colorPrefix = chalk.keyword(color).inverse(prefixText.trim())
-  // let colorText = chalk.keyword(color)(str)
+function expressive(args) {
+  let {text, array, emoji, colorFunc, prefixColorFunc, omitPrefix} = args
 
-  console.log(`${colorPrefix} ${emoji.get(emojiName)}  ${str}`)
+  let coloredPrefix = prefixColorFunc ? prefixColorFunc(prefixText) : prefixText
+  coloredPrefix = omitPrefix ? '' : coloredPrefix + '  '
 
-  if (!arr) return
-  arr.forEach(item => expressive('  ' + item, null, emojiName, color))
+  let coloredText = colorFunc ? colorFunc(text) : text
+  console.log(`${coloredPrefix}${emojis.get(emoji)}  ${coloredText}`)
+
+  if (!array) return
+  array.forEach(item => expressive({...args, text: '  ' + item, array: null}))
 }
 
-module.exports = {log, logArr, red, blue, error, success}
+module.exports = {log, logArr, red, blue, error, success, expressive}
