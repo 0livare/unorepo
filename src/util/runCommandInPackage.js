@@ -14,10 +14,14 @@ async function runCommandInPackage(command, packagePath) {
       omitPrefix: true,
     })
 
-    await execa.command(cmd, {
-      cwd: packagePath,
-      stdio: 'inherit',
-    })
+    try {
+      await execa.command(cmd, {
+        cwd: packagePath,
+        stdio: 'inherit',
+      })
+    } catch (e) {
+      // Do nothing, just go to the next command
+    }
   }
 
   const endTime = new Date()
