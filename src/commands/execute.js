@@ -1,4 +1,5 @@
-var emoji = require('node-emoji')
+const emoji = require('node-emoji')
+const chalk = require('chalk')
 
 const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
@@ -15,11 +16,15 @@ async function execute(command, packageName, args) {
     return
   }
 
-  let ranInPackages = []
+  let succeededInPackages = []
+  let failedInPackages = []
   let promises = []
 
   for (let packageInfo of allPackagesInfo) {
     try {
+      if (packageInfo.name.includes('login')) {
+        throw new Error()
+      }
       let promise = runCommandInPackage(command, packageInfo.location)
 
       if (args.parallel) {
@@ -27,13 +32,13 @@ async function execute(command, packageName, args) {
       } else {
         await promise
         logger.success(`Successfully ran "${command}" in ${packageInfo.name}`)
-        ranInPackages.push(packageInfo.name)
+        succeededInPackages.push(packageInfo.name)
       }
     } catch (e) {
-      logger.error(`Failed to run "${command}" in ${packageInfo.name}`)
+      logger.error(`Failed to run command in ${packageInfo.name}`)
+      failedInPackages.push(packageInfo.name)
     }
   }
-
   let successCount
 
   try {
@@ -52,21 +57,40 @@ async function execute(command, packageName, args) {
 
       successCount = allPackagesInfo.length - errorCount
     } else {
-      successCount = ranInPackages.length
+      successCount = succeededInPackages.length
     }
   } catch (e) {
     logger.error(e)
   }
 
-  reportStatus(successCount, allPackagesInfo.length)
+  reportStatus(
+    successCount,
+    allPackagesInfo.length,
+    command,
+    succeededInPackages,
+    failedInPackages,
+  )
 }
 
-function reportStatus(successCount, totalCount) {
+function reportStatus(
+  successCount,
+  totalCount,
+  command,
+  succeededInPackages,
+  failedInPackages,
+) {
   if (successCount) {
     console.log('') // Print blank line
     logger.success(
-      `Successfully ran "${command} in these ${successCount} (of ${totalCount})`,
-      ranInPackages,
+      `Successfully ran "${command}" in ${successCount} (of ${totalCount})`,
+      succeededInPackages,
+    )
+    failedInPackages.forEach(packageName =>
+      logger.expressive({
+        text: '  ' + packageName,
+        emoji: 'x',
+        prefixColorFunc: chalk.red,
+      }),
     )
   } else {
     logger.error('') // Print blank error line
