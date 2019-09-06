@@ -47,8 +47,8 @@ async function createWatcher(packagesInfo, args) {
     awaitWriteFinish: true, // Helps minimizing thrashing of watch events
   })
 
-  function _buildDependencyChain(changedFilePath) {
-    buildDependencyChain({
+  async function _buildDependencyChain(changedFilePath) {
+    await buildDependencyChain({
       path: changedFilePath,
       script: args.script,
       command: args.execute,
@@ -57,17 +57,17 @@ async function createWatcher(packagesInfo, args) {
 
   // Add event listeners
   return watcher
-    .on('add', path => {
+    .on('add', async path => {
       logger.blue(`File ${path} was added`)
-      _buildDependencyChain(path)
+      await _buildDependencyChain(path)
     })
-    .on('change', path => {
+    .on('change', async path => {
       logger.blue(`File ${path} was changed`)
-      _buildDependencyChain(path)
+      await _buildDependencyChain(path)
     })
-    .on('unlink', path => {
+    .on('unlink', async path => {
       logger.blue(`File ${path} was removed`)
-      _buildDependencyChain(path)
+      await _buildDependencyChain(path)
     })
 }
 
