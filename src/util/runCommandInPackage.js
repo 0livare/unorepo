@@ -11,7 +11,6 @@ async function runCommandInPackage(command, packagePath) {
       text: cmd,
       emoji: 'running',
       colorFunc: chalk.gray,
-      omitPrefix: true,
     })
 
     try {
@@ -30,7 +29,6 @@ async function runCommandInPackage(command, packagePath) {
   logger.expressive({
     text: `Done in ${deltaInSec}s`,
     emoji: 'sparkles',
-    omitPrefix: true,
   })
 }
 
