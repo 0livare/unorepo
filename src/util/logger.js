@@ -1,11 +1,12 @@
 const chalk = require('chalk')
 var emojis = require('node-emoji')
+const ora = require('ora')
 
 const prefixText = '[uno]'
+let loadingSpinner
 
 function log(text, color = 'green') {
-  let prefix = chalk[color](prefixText)
-  console.log(`${prefix}  ${text}`)
+  expressive({text, prefixColorFunc: chalk[color]})
 }
 
 function logArr(str, arr) {
@@ -36,6 +37,15 @@ function success(text, array) {
   })
 }
 
+function startSpinner(text) {
+  loadingSpinner = ora(text).start()
+}
+
+function stopSpinner() {
+  loadingSpinner.stop()
+  loadingSpinner = null
+}
+
 function expressive(args) {
   let {text, array, emoji, colorFunc, prefixColorFunc, omitPrefix} = args
 
@@ -43,10 +53,24 @@ function expressive(args) {
   coloredPrefix = omitPrefix ? '' : coloredPrefix + '  '
 
   let coloredText = colorFunc ? colorFunc(text) : text
-  console.log(`${coloredPrefix}${emojis.get(emoji)}  ${coloredText}`)
+  let emojiText = emoji ? emojis.get(emoji) + '  ' : ''
+
+  if (loadingSpinner) loadingSpinner.stop()
+  console.log(coloredPrefix + emojiText + coloredText)
+  if (loadingSpinner) loadingSpinner.start()
 
   if (!array) return
   array.forEach(item => expressive({...args, text: '  ' + item, array: null}))
 }
 
-module.exports = {log, logArr, red, blue, error, success, expressive}
+module.exports = {
+  log,
+  logArr,
+  red,
+  blue,
+  error,
+  success,
+  expressive,
+  startSpinner,
+  stopSpinner,
+}

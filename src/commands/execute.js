@@ -20,12 +20,16 @@ async function execute(command, packageName, args) {
   let failedInPackages = []
   let promises = []
 
+  logger.startSpinner('Running commands')
+
   for (let packageInfo of allPackagesInfo) {
     try {
-      if (packageInfo.name.includes('login')) {
-        throw new Error()
-      }
-      let promise = runCommandInPackage(command, packageInfo.location)
+      let promise = runCommandInPackage({
+        command,
+        packagePath: packageInfo.location,
+        shouldLog: !args.parallel,
+        packageName: packageInfo.name,
+      })
 
       if (args.parallel) {
         promises.push(promise)
@@ -36,10 +40,10 @@ async function execute(command, packageName, args) {
       }
     } catch (e) {
       logger.error(`Failed to run command in ${packageInfo.name}`)
+      logger.error(e.message)
       failedInPackages.push(packageInfo.name)
     }
   }
-  let successCount
 
   try {
     if (args.parallel) {
@@ -47,57 +51,49 @@ async function execute(command, packageName, args) {
       // waits for all of the promises to finish, regardless of
       // its success or error
       let promisesWhichCannotReject = promises.map(p => p.catch(e => e))
-      let results = await Promise.all(promisesWhichCannotReject)
 
-      let errorCount = results
-        .map(r => r instanceof Error)
-        .reduce((errorCount, isError) => {
-          return isError ? errorCount + 1 : errorCount
-        }, 0)
+      let resolvedPromises = await Promise.all(promisesWhichCannotReject)
+      logger.stopSpinner()
 
-      successCount = allPackagesInfo.length - errorCount
-    } else {
-      successCount = succeededInPackages.length
+      let results = resolvedPromises.map(r => ({
+        packageName: r.packageName,
+        message: r.stdout,
+        wasSuccessful: !(r instanceof Error),
+      }))
+
+      reportStatus({
+        command,
+        results,
+      })
     }
   } catch (e) {
     logger.error(e)
   }
-
-  reportStatus(
-    successCount,
-    allPackagesInfo.length,
-    command,
-    succeededInPackages,
-    failedInPackages,
-  )
 }
 
-function reportStatus(
-  successCount,
-  totalCount,
-  command,
-  succeededInPackages,
-  failedInPackages,
-) {
-  if (successCount) {
-    console.log('') // Print blank line
-    logger.success(
-      `Successfully ran "${command}" in ${successCount} (of ${totalCount})`,
-      succeededInPackages,
-    )
-    failedInPackages.forEach(packageName =>
-      logger.expressive({
-        text: '  ' + packageName,
-        emoji: 'x',
-        prefixColorFunc: chalk.red,
-      }),
-    )
-  } else {
-    logger.error('') // Print blank error line
+function reportStatus({command, results}) {
+  let successCount = results.filter(r => r.wasSuccessful).length
+  let totalCount = results.length
+
+  console.log('') // Print blank line
+
+  if (!successCount) {
     logger.error(
       `Failed to run "${command}" in all packages ${emoji.get('cry')}`,
     )
     logger.error('') // Print blank error line
+    return
+  }
+
+  logger.success(
+    `Successfully ran "${command}" in ${successCount} (of ${totalCount}) packages`,
+  )
+
+  for (let result of results) {
+    let {packageName, message, wasSuccessful} = result
+    let logFunc = wasSuccessful ? logger.success : logger.error
+    logFunc('  ' + packageName)
+    if (message) logFunc('  ' + message)
   }
 }
 

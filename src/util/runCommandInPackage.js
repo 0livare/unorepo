@@ -3,28 +3,43 @@ const chalk = require('chalk')
 const logger = require('./logger')
 const stopwatch = require('./stopwatch')
 
-async function runCommandInPackage(command, packagePath) {
+async function runCommandInPackage({
+  command,
+  packagePath,
+  shouldLog,
+  packageName,
+}) {
   let commands = command.split('&&').map(s => s.trim())
   stopwatch.start()
 
   for (let cmd of commands) {
-    logger.expressive({
-      text: cmd,
-      emoji: 'running',
-      colorFunc: chalk.gray,
-    })
+    if (shouldLog !== false) {
+      logger.expressive({
+        text: cmd,
+        emoji: 'running',
+        colorFunc: chalk.gray,
+      })
+    }
 
     try {
-      await execa.command(cmd, {
-        cwd: packagePath,
-        stdio: 'inherit',
-      })
+      const {stdout} = await execa.command(cmd, {cwd: packagePath})
+
+      if (stdout && shouldLog) {
+        logger.expressive({text: stdout, omitPrefix: true})
+      }
+
+      return {stdout, packageName}
     } catch (e) {
-      // Do nothing, just go to the next command
+      if (shouldLog) logger.expressive({text: e.stdout, omitPrefix: true})
+
+      e.packageName = packageName
+      return e
     }
   }
 
-  stopwatch.stop().log()
+  if (shouldLog !== false) {
+    stopwatch.stop().log()
+  }
 }
 
 module.exports = runCommandInPackage
