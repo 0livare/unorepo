@@ -5,7 +5,7 @@ const ora = require('ora')
 const prefixText = '[uno]'
 let loadingSpinner
 
-function log(text, color = 'green') {
+function log(text, color = 'white') {
   expressive({text, prefixColorFunc: chalk[color]})
 }
 
@@ -52,6 +52,7 @@ function expressive(args) {
   let coloredPrefix = prefixColorFunc ? prefixColorFunc(prefixText) : prefixText
   coloredPrefix = omitPrefix ? '' : coloredPrefix + '  '
 
+  text = text || ''
   let coloredText = colorFunc ? colorFunc(text) : text
   let emojiText = emoji ? emojis.get(emoji) + '  ' : ''
 
