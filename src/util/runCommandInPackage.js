@@ -1,7 +1,7 @@
 const execa = require('execa')
 const chalk = require('chalk')
 const logger = require('./logger')
-const stopwatch = require('./stopwatch')
+const Stopwatch = require('./stopwatch')
 
 async function runCommandInPackage({
   command,
@@ -10,7 +10,7 @@ async function runCommandInPackage({
   packageName,
 }) {
   let commands = command.split('&&').map(s => s.trim())
-  stopwatch.start()
+  let watch = new Stopwatch().start()
 
   for (let cmd of commands) {
     if (shouldLog !== false) {
@@ -38,7 +38,7 @@ async function runCommandInPackage({
   }
 
   if (shouldLog !== false) {
-    stopwatch.stop().log()
+    watch.stop().log()
   }
 }
 

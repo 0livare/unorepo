@@ -39,4 +39,4 @@ function round(num, decimalPlaces) {
   return Math.round(num * multiplier) / multiplier
 }
 
-module.exports = stopwatch()
+module.exports = stopwatch

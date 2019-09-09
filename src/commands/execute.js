@@ -1,20 +1,15 @@
 const emoji = require('node-emoji')
-const chalk = require('chalk')
 
 const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
 const runCommandInPackage = require('../util/runCommandInPackage')
+const Stopwatch = require('../util/stopwatch')
 
 async function execute(command, packageName, args) {
   let allPackagesInfo = await getPackagesInfo(packageName)
   if (!allPackagesInfo.length) return
 
-  if (allPackagesInfo.length === 1 && args.parallel) {
-    logger.error(
-      `Cannot run command in parallel in a single package (${packageName})`,
-    )
-    return
-  }
+  let watch = new Stopwatch().start()
 
   let results = []
   if (args.parallel) {
@@ -42,6 +37,8 @@ async function execute(command, packageName, args) {
     command,
     results: finalResults,
   })
+
+  watch.stop().log()
 
   function runCommand(packageInfo) {
     return runCommandInPackage({
