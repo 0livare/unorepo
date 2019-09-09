@@ -56,8 +56,7 @@ async function execute(command, packageName, args) {
 
       if (wasSuccessful) {
         logger.success(`Successfully ran "${command}" in ${packageName}`)
-        if (message) logger.success(chalk.gray(message))
-
+        logCommandOutput(message)
         return result
       }
 
@@ -66,7 +65,7 @@ async function execute(command, packageName, args) {
       throw result
     } catch (e) {
       logger.error(`Failed to run "${command}" in ${e.packageName}`)
-      if (e.message) logger.error(chalk.gray(e.message))
+      logCommandOutput(e.message)
       return e
     }
   }
@@ -108,8 +107,23 @@ function reportStatus({command, results, shouldLogMessage}) {
     let {packageName, message, wasSuccessful} = result
     let logFunc = wasSuccessful ? logger.success : logger.error
     logFunc('  ' + packageName)
-    if (shouldLogMessage && message) logFunc('  ' + chalk.gray(message))
+    if (shouldLogMessage) logCommandOutput(message)
   }
+}
+
+function logCommandOutput(message) {
+  if (!message) return
+
+  // Prefix each line of the output
+  message = (message.trim() + '\n  ')
+    .split('\n')
+    .map(line => `${logger.prefixText}  ${line}`)
+    .join('\n')
+
+  logger.expressive({
+    text: chalk.gray(message),
+    omitPrefix: message.startsWith(logger.prefixText),
+  })
 }
 
 module.exports = execute

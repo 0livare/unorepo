@@ -74,4 +74,5 @@ module.exports = {
   expressive,
   startSpinner,
   stopSpinner,
+  prefixText,
 }
