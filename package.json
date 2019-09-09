@@ -1,6 +1,6 @@
 {
   "name": "unorepo",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A tool for managing a monorepo via lerna and yarn workspaces",
   "author": "Zach Posten <https://github.com/zposten>",
   "license": "ISC",
