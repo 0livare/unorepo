@@ -1,41 +1,45 @@
 const execa = require('execa')
 const chalk = require('chalk')
 const logger = require('./logger')
+const Stopwatch = require('./stopwatch')
 
-async function runCommandInPackage(command, packagePath) {
+async function runCommandInPackage({
+  command,
+  packagePath,
+  shouldLog,
+  packageName,
+}) {
   let commands = command.split('&&').map(s => s.trim())
-  const startTime = new Date()
+  let watch = new Stopwatch().start()
 
   for (let cmd of commands) {
-    logger.expressive({
-      text: cmd,
-      emoji: 'running',
-      colorFunc: chalk.gray,
-      omitPrefix: true,
-    })
+    if (shouldLog !== false) {
+      logger.expressive({
+        text: cmd,
+        emoji: 'running',
+        colorFunc: chalk.gray,
+      })
+    }
 
-    await execa.command(cmd, {
-      cwd: packagePath,
-      stdio: 'inherit',
-    })
+    try {
+      const {stdout} = await execa.command(cmd, {cwd: packagePath})
+
+      if (stdout && shouldLog) {
+        logger.expressive({text: stdout, omitPrefix: true})
+      }
+
+      return {stdout, packageName}
+    } catch (e) {
+      if (shouldLog) logger.expressive({text: e.stdout, omitPrefix: true})
+
+      e.packageName = packageName
+      return e
+    }
   }
 
-  const endTime = new Date()
-  const deltaInMs = endTime - startTime
-  const deltaInSec = round(deltaInMs / 1000, 2)
-  logger.expressive({
-    text: `Done in ${deltaInSec}s`,
-    emoji: 'sparkles',
-    omitPrefix: true,
-  })
-}
-
-function round(num, decimalPlaces) {
-  // If the number will be rounded to 0, just return it
-  if (num < Math.pow(10, -decimalPlaces)) return num
-
-  let multiplier = Math.pow(10, decimalPlaces)
-  return Math.round(num * multiplier) / multiplier
+  if (shouldLog !== false) {
+    watch.stop().log()
+  }
 }
 
 module.exports = runCommandInPackage
