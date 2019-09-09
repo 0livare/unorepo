@@ -92,16 +92,17 @@ function reportStatus({command, results, shouldLogMessage}) {
   logger.log()
   logger.log()
 
-  if (!successCount) {
-    logger.error(
-      `Failed to run "${command}" in all packages ${emoji.get('cry')}`,
+  if (successCount) {
+    logger.success(
+      `Successfully ran "${command}" in ${successCount} (of ${totalCount}) packages`,
     )
-    return
+  } else {
+    logger.error(
+      `Failed to run "${command}" in all ${totalCount} packages ${emoji.get(
+        'cry',
+      )}`,
+    )
   }
-
-  logger.success(
-    `Successfully ran "${command}" in ${successCount} (of ${totalCount}) packages`,
-  )
 
   for (let result of results) {
     let {packageName, message, wasSuccessful} = result
