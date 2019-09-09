@@ -13,7 +13,9 @@ async function execute(command, packageName, args) {
 
   let results = []
   if (args.parallel) {
-    logger.startSpinner('Running commands')
+    logger.startSpinner(
+      `Running "${command}" in ${allPackagesInfo.length} packages`,
+    )
     let promises = allPackagesInfo.map(runCommand)
     results = await executeInParallel(promises)
     logger.stopSpinner()
