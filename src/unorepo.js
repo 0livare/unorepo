@@ -36,6 +36,7 @@ unorepo
   .alias('r')
   .description('Run a package.json script in one or all packages')
   .action(require('./commands/run'))
+  .option('-p, --parallel', 'Run the script in every package simultaneously')
 
 unorepo
   .command('execute <cmd> [pkg]')
