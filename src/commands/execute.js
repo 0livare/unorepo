@@ -1,4 +1,5 @@
 const emoji = require('node-emoji')
+const chalk = require('chalk')
 
 const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
@@ -16,43 +17,27 @@ async function execute(command, packageName, args) {
     logger.startSpinner(
       `Running "${command}" in ${allPackagesInfo.length} packages`,
     )
-    let promises = allPackagesInfo.map(runCommand)
-    results = await executeInParallel(promises)
+    results = await executeAll()
     logger.stopSpinner()
   } else {
     for (let packageInfo of allPackagesInfo) {
       logger.startSpinner(`Running "${command}" in ${packageInfo.name}`)
-      let promise = runCommand(packageInfo)
-      let result = await executeSingle(promise)
-      results.push(result)
+      results.push(await executeSingle(packageInfo))
       logger.stopSpinner()
     }
   }
 
-  let finalResults = results.map(r => ({
-    packageName: r.packageName,
-    message: r.stdout,
-    wasSuccessful: !(r instanceof Error),
-  }))
-
   reportStatus({
     command,
-    results: finalResults,
+    results,
+    shouldLogMessage: args.parallel,
   })
-
   watch.stop().log()
 
-  function runCommand(packageInfo) {
-    return runCommandInPackage({
-      command,
-      packagePath: packageInfo.location,
-      packageName: packageInfo.name,
-      shouldLog: false,
-    })
-  }
-
-  async function executeInParallel(promises) {
+  async function executeAll() {
     try {
+      let promises = allPackagesInfo.map(runCommand)
+
       // Prevent the promises from rejecting so that Promise.all
       // waits for all of the promises to finish, regardless of
       // its success or error
@@ -63,13 +48,16 @@ async function execute(command, packageName, args) {
     }
   }
 
-  async function executeSingle(promise) {
+  async function executeSingle(packageInfo) {
     try {
+      let promise = runCommand(packageInfo)
       let result = await promise
-      let wasSuccessful = !(result instanceof Error)
+      let {wasSuccessful, message, packageName} = result
 
       if (wasSuccessful) {
-        logger.success(`Successfully ran "${command}" in ${result.packageName}`)
+        logger.success(`Successfully ran "${command}" in ${packageName}`)
+        if (message) logger.success(chalk.gray(message))
+
         return result
       }
 
@@ -78,12 +66,26 @@ async function execute(command, packageName, args) {
       throw result
     } catch (e) {
       logger.error(`Failed to run "${command}" in ${e.packageName}`)
+      if (e.message) logger.error(chalk.gray(e.message))
       return e
     }
   }
+
+  function runCommand(packageInfo) {
+    return runCommandInPackage({
+      command,
+      packagePath: packageInfo.location,
+      packageName: packageInfo.name,
+      shouldLog: false,
+    }).then(result => ({
+      packageName: result.packageName,
+      message: result.stdout,
+      wasSuccessful: !(result instanceof Error),
+    }))
+  }
 }
 
-function reportStatus({command, results}) {
+function reportStatus({command, results, shouldLogMessage}) {
   let successCount = results.filter(r => r.wasSuccessful).length
   let totalCount = results.length
 
@@ -106,7 +108,7 @@ function reportStatus({command, results}) {
     let {packageName, message, wasSuccessful} = result
     let logFunc = wasSuccessful ? logger.success : logger.error
     logFunc('  ' + packageName)
-    if (message) logFunc('  ' + message)
+    if (shouldLogMessage && message) logFunc('  ' + chalk.gray(message))
   }
 }
 
