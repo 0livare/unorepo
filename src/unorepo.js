@@ -16,16 +16,22 @@ unorepo
 unorepo
   .command('execute <cmd> [pkg]')
   .alias('x')
-  .description('Run an arbitrary command in one or all packages')
+  .description('Run an arbitrary command in one or many packages')
   .action(require('./commands/execute'))
-  .option('-p, --parallel', 'Run the command in every package simultaneously')
+  .option(
+    '-p, --parallel',
+    'Run the command in selected packages simultaneously',
+  )
 
 unorepo
   .command('run <script> [<pkg>]')
   .alias('r')
-  .description('Run a package.json script in one or all packages')
+  .description('Run an NPM script in one or many packages')
   .action(require('./commands/run'))
-  .option('-p, --parallel', 'Run the script in every package simultaneously')
+  .option(
+    '-p, --parallel',
+    'Run the script in selected packages simultaneously',
+  )
 
 unorepo
   .command('list')
