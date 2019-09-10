@@ -15,7 +15,7 @@ async function run(scriptName, packageName, args) {
   // the lerna output.  Also, it does not avoid running the script
   // in private packages like lerna does.
 
-  execute(`yarn ${scriptName}`, packageName, args)
+  execute(`yarn run ${scriptName}`, packageName, args)
 }
 
 module.exports = run
