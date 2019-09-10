@@ -45,4 +45,4 @@ unorepo
   .action(require('./commands/execute'))
   .option('-p, --parallel', 'Run the command in every package simultaneously')
 
-unorepo.version('0.0.16').parse(process.argv)
+unorepo.version('0.0.21').parse(process.argv)
