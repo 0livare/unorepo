@@ -36,6 +36,7 @@ unorepo
   .alias('r')
   .description('Run a package.json script in one or all packages')
   .action(require('./commands/run'))
+  .option('-p, --parallel', 'Run the script in every package simultaneously')
 
 unorepo
   .command('execute <cmd> [pkg]')
@@ -44,4 +45,4 @@ unorepo
   .action(require('./commands/execute'))
   .option('-p, --parallel', 'Run the command in every package simultaneously')
 
-unorepo.version('0.0.16').parse(process.argv)
+unorepo.version('0.0.21').parse(process.argv)
