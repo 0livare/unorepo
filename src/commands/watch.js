@@ -24,6 +24,7 @@ async function createWatcher(packagesInfo, args) {
     logger.logArr(
       `Watching ${JSON.stringify(globs)} from the following packages:`,
       packagesInfo.map(pkg => pkg.name),
+      'green',
     )
   } else {
     logger.logArr(

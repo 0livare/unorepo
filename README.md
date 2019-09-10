@@ -76,11 +76,11 @@ uno watch --execute 'yarn build && yalc push --no-sig'
 
 ### `uno execute '<command>' [pkg]`
 
-Execute an arbitrary CLI command in one or all packages.
+Execute an arbitrary CLI `command` in one or all packages.
 
 This can be any command that specifies a file (e.g. yarn, npm, echo, etc), followed by arguments. Shell-specific features will not work.
 
-For best results, the command should be surrounded with quotes.
+For best results, the `command` should be surrounded with quotes.
 
 If the file or an argument contains spaces, they must be escaped with backslashes. This matters especially if command is not a constant but a variable, for example with `__dirname` or `process.cwd()`. Except for spaces, no escaping/quoting is needed.
 
@@ -90,25 +90,45 @@ uno execute --parallel 'pwd'
 uno execute 'yarn build' my-package
 ```
 
+The `pkg` parameter can be any string that is contained in the package name. For example, if you want to run the command in both `@namespace/login-page` and `@namespace/login-form`, you could run:
+
+```bash
+uno execute '<command>' login
+```
+
 | Parameter | Required? | Default        | Description                                                               |
 | --------- | --------- | -------------- | ------------------------------------------------------------------------- |
 | `command` | true      | -              | The CLI command to run. Must be quoted, and in the form `file arguments`. |
-| `pkg`     | false     | _ALL PACKAGES_ | The name (or partial name) of the package to run `command` in.            |
+| `pkg`     | false     | _ALL PACKAGES_ | The name (or partial name) of the package(s) to run `command` in.         |
 
-| Option             | Default | Description                                     |
-| ------------------ | ------- | ----------------------------------------------- |
-| `--parallel`, `-p` | false   | Run the command in every package simultaneously |
+| Option             | Default | Description                                      |
+| ------------------ | ------- | ------------------------------------------------ |
+| `--parallel`, `-p` | false   | Run the command in every package simultaneously. |
 
-### `uno bootstrap`
+### `uno run <script> [pkg]`
 
-Link packages together via symlinks, and install missing dependencies. An alias for [`lerna bootstrap`][lerna-bootstrap], which is an [alias][lerna-yarn] for `yarn install`.
+Run an NPM script (defined in package.json) in one or all packages.
 
-This linking is what allows your local packages to depend on each other directly in your file system, rather then depending on files copied into `node_modules` via a typical (and at times painful) publish and pull method (e.g. using [yalc]).
+If the second `pkg` argument is omitted, the `script` will be run in all packages. If `pkg` is provided, the `script` will only be run in packages that include that string.
 
-Yarn workspaces is really doing all the hard work here of resolving your dependencies and linking them together.
+This command is similar to `uno execute`, but limited to predefined scripts in the package.json of each package.
 
-[lerna-bootstrap]: https://github.com/lerna/lerna/tree/master/commands/bootstrap
-[yalc]: https://github.com/whitecolor/yalc
+```bash
+# Run the 'build' NPM script in all packages
+uno run build
+
+# Run the 'test' NPM script in packages whose name contain 'login'
+uno run test login
+```
+
+| Parameter | Required? | Default        | Description                                                        |
+| --------- | --------- | -------------- | ------------------------------------------------------------------ |
+| `script`  | true      | -              | The name of a script defined in the package.json of the package(s) |
+| `pkg`     | false     | _ALL PACKAGES_ | A name (or partial name) of the package(s) to run `script` in      |
+
+| Option             | Default | Description                                    |
+| ------------------ | ------- | ---------------------------------------------- |
+| `--parallel`, `-p` | false   | Run the script in every package simultaneously |
 
 ### `uno list`
 
@@ -128,26 +148,16 @@ The usual cause of this problem is mismatched version numbers. Ensure that the v
 
 [yarn-workspaces-info]: https://yarnpkg.com/lang/en/docs/cli/workspaces/#toc-yarn-workspaces-info
 
-### `uno run <script> <pkg>`
+### `uno bootstrap`
 
-Run a package.json script in one or all packages.
+Link packages together via symlinks, and install missing dependencies. An alias for [`lerna bootstrap`][lerna-bootstrap], which is an [alias][lerna-yarn] for `yarn install`.
 
-If the second `pkg` argument is ommitted, the `script` will be run in all packages. If `pkg` is provided, the `script` will only be run in that particular package.
+This linking is what allows your local packages to depend on each other directly in your file system, rather then depending on files copied into `node_modules` via a typical (and at times painful) publish and pull method (e.g. using [yalc]).
 
-This command is similar to `uno execute`, but limited to predefined scripts in the package.json of each package.
+Yarn workspaces is really doing all the hard work here of resolving your dependencies and linking them together.
 
-```bash
-# Run 'build' in all packages
-uno run build
-
-# Run 'test' in packages that start with 'button-'
-uno run test 'button-*'
-```
-
-| Parameter | Required? | Default        | Description                                                               |
-| --------- | --------- | -------------- | ------------------------------------------------------------------------- |
-| `script`  | true      | -              | The name of a script defined in the package.json of the package(s)        |
-| `pkg`     | false     | _ALL PACKAGES_ | The name of the single package to run the script in. May use glob syntax. |
+[lerna-bootstrap]: https://github.com/lerna/lerna/tree/master/commands/bootstrap
+[yalc]: https://github.com/whitecolor/yalc
 
 ## Building the project locally
 

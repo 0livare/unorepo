@@ -52,16 +52,16 @@ async function execute(command, packageName, args) {
     try {
       let promise = runCommand(packageInfo)
       let result = await promise
-      let {wasSuccessful, message, packageName} = result
+      let {failed, message, packageName} = result
 
-      if (wasSuccessful) {
+      if (!failed) {
         logger.success(`Successfully ran "${command}" in ${packageName}`)
         logCommandOutput(message)
         return result
       }
 
-      // Avoid repeating the error case, and just go to
-      // the catch clause below
+      // If we failed without throwing an error, avoid repeating
+      // the error case, and just go to the catch clause below
       throw result
     } catch (e) {
       logger.error(`Failed to run "${command}" in ${e.packageName}`)
@@ -76,16 +76,12 @@ async function execute(command, packageName, args) {
       packagePath: packageInfo.location,
       packageName: packageInfo.name,
       shouldLog: false,
-    }).then(result => ({
-      packageName: result.packageName,
-      message: result.stdout,
-      wasSuccessful: !(result instanceof Error),
-    }))
+    })
   }
 }
 
 function reportStatus({command, results, shouldLogMessage}) {
-  let successCount = results.filter(r => r.wasSuccessful).length
+  let successCount = results.filter(r => !r.failed).length
   let totalCount = results.length
 
   logger.log()
@@ -105,8 +101,8 @@ function reportStatus({command, results, shouldLogMessage}) {
   }
 
   for (let result of results) {
-    let {packageName, message, wasSuccessful} = result
-    let logFunc = wasSuccessful ? logger.success : logger.error
+    let {packageName, message, failed} = result
+    let logFunc = failed ? logger.error : logger.success
     logFunc('  ' + packageName)
     if (shouldLogMessage) logCommandOutput(message)
   }

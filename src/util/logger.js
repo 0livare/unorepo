@@ -9,11 +9,11 @@ function log(text, color = 'white') {
   expressive({text, prefixColorFunc: chalk[color]})
 }
 
-function logArr(str, arr) {
-  log(str)
+function logArr(str, arr, color) {
+  log(str, color)
 
   if (!arr) return
-  arr.forEach(item => log('  ' + item))
+  arr.forEach(item => log('  ' + item, color))
 }
 
 function red(str) {

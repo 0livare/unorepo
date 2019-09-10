@@ -3,7 +3,7 @@ const execute = require('./execute')
 /*
  * Run a package.json script in one or all (public) packages
  */
-async function run(scriptName, packageName, args) {
+async function run(scriptName, packageName, args = {}) {
   // Lerna has similar functionality with
   // `lerna run --scope <packageName> <scriptName>`
   // but they use glob patterns for the package name filtering,
@@ -15,7 +15,7 @@ async function run(scriptName, packageName, args) {
   // the lerna output.  Also, it does not avoid running the script
   // in private packages like lerna does.
 
-  execute(`yarn ${scriptName}`, packageName, args)
+  execute(`yarn run ${scriptName}`, packageName, args)
 }
 
 module.exports = run
