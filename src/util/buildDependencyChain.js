@@ -1,4 +1,5 @@
 const execa = require('execa')
+const runScript = require('../commands/run')
 
 const getPackageJson = require('./getPackageJson')
 const findNearestNodeModule = require('./findNearestNodeModule')
@@ -24,7 +25,7 @@ async function buildDependencyChain({path, script, command}) {
     if (command) {
       await runCommandInPackage(command, pkgPath)
     } else {
-      await runScript(pkgName, script)
+      await runScript(script, pkgName)
     }
   }
 
@@ -60,11 +61,6 @@ async function findDependentPackages(packageName) {
 
   let [changedPkg, ...dependentPackages] = JSON.parse(stdout)
   return dependentPackages
-}
-
-async function runScript(pkgName, scriptName) {
-  const lernaArgs = ['run', scriptName, '--scope', pkgName]
-  await execa('lerna', lernaArgs, {stdio: 'inherit'})
 }
 
 module.exports = buildDependencyChain
