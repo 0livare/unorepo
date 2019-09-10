@@ -21,11 +21,11 @@ async function buildDependencyChain({path, script, command}) {
   // Create a local function to build a package
   // in the correct fashion given the passed
   // parameters
-  async function _buildPackage(pkgName, pkgPath) {
+  async function _buildPackage(packageName, packagePath) {
     if (command) {
-      await runCommandInPackage(command, pkgPath)
+      await runCommandInPackage({command, packagePath})
     } else {
-      await runScript(script, pkgName)
+      await runScript(script, packageName)
     }
   }
 
