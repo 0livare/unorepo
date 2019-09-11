@@ -40,17 +40,15 @@ async function runCommandInPackage({
     try {
       let commandResult = await execa.command(cmd, {cwd: packagePath})
       commandResult.packageName = packageName
-      commandResult.message = commandResult.stdout // stdout because it didn't throw err
+      commandResult.message = commandResult.stdout || commandResult.stderr
 
       logCommandOutput(commandResult.stdout)
     } catch (e) {
-      console.log(e)
-
       if (shouldLog !== false)
         logger.error(`Failed to run command "${command}" in ${packageName}`)
 
       e.packageName = packageName
-      e.message = e.stderr // stderr because it threw an err
+      e.message = e.stderr || e.stdout
       results.push(e)
 
       break
