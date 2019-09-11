@@ -10,11 +10,11 @@ const Stopwatch = require('./stopwatch')
  * @param {string} packagePath The path of the package to run the command in
  * @param {boolean} shouldLog If true, this function will log command output and timing
  * @param {string} packageName The name of the package -- only used for logging purposes
- * @returns `{
+ * @returns `[{
  *  failed: boolean,
  *  message: stdout or stderr, depending on failed,
  *  packageName: The same packageName passed into this function
- * }`
+ * }]`
  */
 async function runCommandInPackage({
   command,
@@ -25,7 +25,7 @@ async function runCommandInPackage({
   let commands = command.split('&&').map(s => s.trim())
   let watch = new Stopwatch().start()
 
-  let result
+  let results = []
 
   for (let cmd of commands) {
     if (shouldLog !== false) {
@@ -37,24 +37,20 @@ async function runCommandInPackage({
     }
 
     try {
-      const commandResult = await execa.command(cmd, {cwd: packagePath})
-
-      const {stdout} = commandResult
-      if (stdout && shouldLog) {
-        logger.expressive({text: stdout, omitPrefix: true})
-      }
-
-      // TODO: The return result will only incorporate the final command
-      // when multiple are chained together with '&&
+      let commandResult = await execa.command(cmd, {cwd: packagePath})
       commandResult.packageName = packageName
-      commandResult.message = stdout
-      result = commandResult
+      commandResult.message = commandResult.stdout // stdout because it didn't throw err
+
+      logCommandOutput(commandResult.stdout)
     } catch (e) {
-      if (shouldLog) logger.expressive({text: e.stdout, omitPrefix: true})
+      console.log(e)
+
+      if (shouldLog !== false)
+        logger.error(`Failed to run command "${command}" in ${packageName}`)
 
       e.packageName = packageName
-      e.message = e.stderr
-      result = e
+      e.message = e.stderr // stderr because it threw an err
+      results.push(e)
 
       break
     }
@@ -64,7 +60,16 @@ async function runCommandInPackage({
     watch.stop().log()
   }
 
-  return result
+  // Return a single object describing the overall result of this command
+  return {
+    ...results[0],
+    // True if any sub command ("cmd1 && cmd2") failed
+    failed: results
+      .map(r => r.failed)
+      .reduce((accum, didFail) => accum || didFail, false),
+    message: results.map(r => r.message).join('\n\n'),
+    packageName,
+  }
 }
 
 module.exports = runCommandInPackage

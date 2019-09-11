@@ -49,25 +49,18 @@ async function execute(command, packageName, args) {
   }
 
   async function executeSingle(packageInfo) {
-    try {
-      let promise = runCommand(packageInfo)
-      let result = await promise
-      let {failed, message, packageName} = result
+    let promise = runCommand(packageInfo)
+    let result = await promise
+    let packageName = result.packageName
 
-      if (!failed) {
-        logger.success(`Successfully ran "${command}" in ${packageName}`)
-        logCommandOutput(message)
-        return result
-      }
-
-      // If we failed without throwing an error, avoid repeating
-      // the error case, and just go to the catch clause below
-      throw result
-    } catch (e) {
-      logger.error(`Failed to run "${command}" in ${e.packageName}`)
-      logCommandOutput(e.message)
-      return e
+    if (result.failed) {
+      logger.error(`Failed to execute "${command}" in ${packageName}`)
+    } else {
+      logger.success(`Successfully ran "${command}" in ${packageName}`)
     }
+
+    logCommandOutput(result.message)
+    return result
   }
 
   function runCommand(packageInfo) {
