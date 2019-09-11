@@ -20,18 +20,10 @@ async function watch(args) {
 async function createWatcher(packagesInfo, args) {
   let globs = changeExtensionsToGlobs(args.ext)
 
-  if (globs) {
-    logger.logArr(
-      `Watching ${JSON.stringify(globs)} from the following packages:`,
-      packagesInfo.map(pkg => pkg.name),
-      'green',
-    )
-  } else {
-    logger.logArr(
-      'Watching the following packages:',
-      packagesInfo.map(pkg => pkg.name),
-    )
-  }
+  let logText = globs
+    ? `Watching ${JSON.stringify(globs)} from the following packages:`
+    : 'Watching the following packages:'
+  logger.logArr(logText, packagesInfo.map(pkg => pkg.name), 'green')
 
   let packagesPaths = packagesInfo.map(pkg => pkg.location)
   let globbedPaths = addFileGlobToPath(globs, packagesPaths)
