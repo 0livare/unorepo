@@ -5,6 +5,7 @@ const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
 const runCommandInPackage = require('../util/runCommandInPackage')
 const Stopwatch = require('../util/stopwatch')
+const logCommandOutput = require('../util/logCommandOutput')
 
 async function execute(command, packageName, args) {
   let allPackagesInfo = await getPackagesInfo(packageName)
@@ -49,25 +50,18 @@ async function execute(command, packageName, args) {
   }
 
   async function executeSingle(packageInfo) {
-    try {
-      let promise = runCommand(packageInfo)
-      let result = await promise
-      let {failed, message, packageName} = result
+    let promise = runCommand(packageInfo)
+    let result = await promise
+    let packageName = result.packageName
 
-      if (!failed) {
-        logger.success(`Successfully ran "${command}" in ${packageName}`)
-        logCommandOutput(message)
-        return result
-      }
-
-      // If we failed without throwing an error, avoid repeating
-      // the error case, and just go to the catch clause below
-      throw result
-    } catch (e) {
-      logger.error(`Failed to run "${command}" in ${e.packageName}`)
-      logCommandOutput(e.message)
-      return e
+    if (result.failed) {
+      logger.error(`Failed to execute "${command}" in ${packageName}`)
+    } else {
+      logger.success(`Successfully ran "${command}" in ${packageName}`)
     }
+
+    logCommandOutput(result.message)
+    return result
   }
 
   function runCommand(packageInfo) {
@@ -106,21 +100,6 @@ function reportStatus({command, results, shouldLogMessage}) {
     logFunc('  ' + packageName)
     if (shouldLogMessage) logCommandOutput(message)
   }
-}
-
-function logCommandOutput(message) {
-  if (!message) return
-
-  // Prefix each line of the output
-  message = (message.trim() + '\n  ')
-    .split('\n')
-    .map(line => `${logger.prefixText}  ${line}`)
-    .join('\n')
-
-  logger.expressive({
-    text: chalk.gray(message),
-    omitPrefix: message.startsWith(logger.prefixText),
-  })
 }
 
 module.exports = execute
