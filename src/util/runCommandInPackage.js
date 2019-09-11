@@ -2,6 +2,7 @@ const execa = require('execa')
 const chalk = require('chalk')
 const logger = require('./logger')
 const Stopwatch = require('./stopwatch')
+const logCommandOutput = require('./logCommandOutput')
 
 /**
  * Run an arbitrary CLI command in a specific package

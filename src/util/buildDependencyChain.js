@@ -23,7 +23,12 @@ async function buildDependencyChain({path, script, command}) {
   // parameters
   async function _buildPackage(packageName, packagePath) {
     if (command) {
-      await runCommandInPackage({command, packagePath})
+      await runCommandInPackage({
+        command,
+        packagePath,
+        shouldLog: true,
+        packageName,
+      })
     } else {
       await runScript(script, packageName)
     }

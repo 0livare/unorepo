@@ -5,6 +5,7 @@ const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
 const runCommandInPackage = require('../util/runCommandInPackage')
 const Stopwatch = require('../util/stopwatch')
+const logCommandOutput = require('../util/logCommandOutput')
 
 async function execute(command, packageName, args) {
   let allPackagesInfo = await getPackagesInfo(packageName)
@@ -99,21 +100,6 @@ function reportStatus({command, results, shouldLogMessage}) {
     logFunc('  ' + packageName)
     if (shouldLogMessage) logCommandOutput(message)
   }
-}
-
-function logCommandOutput(message) {
-  if (!message) return
-
-  // Prefix each line of the output
-  message = (message.trim() + '\n  ')
-    .split('\n')
-    .map(line => `${logger.prefixText}  ${line}`)
-    .join('\n')
-
-  logger.expressive({
-    text: chalk.gray(message),
-    omitPrefix: message.startsWith(logger.prefixText),
-  })
 }
 
 module.exports = execute
