@@ -45,13 +45,19 @@ async function runCommandInPackage({
       logCommandOutput(commandResult.stdout)
     } catch (e) {
       if (shouldLog !== false)
-        logger.error(`Failed to run command "${command}" in ${packageName}`)
+        logger.error(`Failed to run command "${cmd}" in ${packageName}`)
 
       e.packageName = packageName
       e.message = e.stderr || e.stdout
       results.push(e)
 
-      break
+      // Originally, I thought the code should break here, hypothesizing that
+      // the most common case is where the later stringed commands depend on
+      // the earlier ones.  But I think that is too presumptive here.  The user
+      // will be able to see if each command fails, and then given their specific
+      // context, should be able to understand that OF COURSE the second one failed,
+      // because the first one already failed.
+      // break
     }
   }
 
@@ -61,7 +67,7 @@ async function runCommandInPackage({
 
   // Return a single object describing the overall result of this command
   return {
-    ...results[0],
+    ...results[0], // This is a bit of a cop-out, but often times useful
     // True if any sub command ("cmd1 && cmd2") failed
     failed: results
       .map(r => r.failed)
