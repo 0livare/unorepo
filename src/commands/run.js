@@ -1,4 +1,4 @@
-const execute = require('./execute')
+const execute = require('./execute').command
 
 /*
  * Run a package.json script in one or all (public) packages

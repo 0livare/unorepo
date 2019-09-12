@@ -17,7 +17,7 @@ unorepo
   .command('execute <cmd> [pkg]')
   .alias('x')
   .description('Run an arbitrary command in one or many packages')
-  .action(require('./commands/execute'))
+  .action(require('./commands/execute').command)
   .option(
     '-p, --parallel',
     'Run the command in selected packages simultaneously',
@@ -51,4 +51,4 @@ unorepo
   .description('Link packages together via symlinks')
   .action(require('./commands/bootstrap'))
 
-unorepo.version('0.0.23').parse(process.argv)
+unorepo.version('0.0.999').parse(process.argv)

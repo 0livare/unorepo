@@ -1,5 +1,6 @@
 const execa = require('execa')
-const runScript = require('../commands/run')
+const executeScriptInPackages = require('../commands/execute')
+  .executeScriptInPackages
 
 const getPackageJson = require('./getPackageJson')
 const findNearestNodeModule = require('./findNearestNodeModule')
@@ -17,31 +18,17 @@ const runCommandInPackage = require('./runCommandInPackage')
 async function buildDependencyChain({path, script, command}) {
   const changedPackagePath = findNearestNodeModule(path)
   const changedPackageName = getPackageJson(changedPackagePath).name
+  command = command || `yarn run ${script}`
 
-  // Create a local function to build a package
-  // in the correct fashion given the passed
-  // parameters
-  async function _buildPackage(packageName, packagePath) {
-    if (command) {
-      await runCommandInPackage({
-        command,
-        packagePath,
-        shouldLog: true,
-        packageName,
-      })
-    } else {
-      await runScript(script, packageName)
-    }
+  let changedPackageInfo = {
+    name: changedPackageName,
+    location: changedPackagePath,
   }
 
-  // First build the package that has changed
-  await _buildPackage(changedPackageName, changedPackagePath)
-
-  // Then build all packages that depend on the one that has changed
   const dependentPackageInfos = await findDependentPackages(changedPackageName)
-  await Promise.all(
-    dependentPackageInfos.map(pkg => _buildPackage(pkg.name, pkg.location)),
-  )
+  let allPackageInfos = [changedPackageInfo, ...dependentPackageInfos]
+
+  await executeScriptInPackages(command, allPackageInfos)
 }
 
 /**

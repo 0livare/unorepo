@@ -48,7 +48,13 @@ async function runCommandInPackage({
         logger.error(`Failed to run command "${cmd}" in ${packageName}`)
 
       e.packageName = packageName
-      e.message = e.stderr || e.stdout
+      e.message = e.stderr
+
+      if (e.stdout) {
+        e.message += '\n\n'
+        e.message += e.stdout
+      }
+
       results.push(e)
 
       // Originally, I thought the code should break here, hypothesizing that
