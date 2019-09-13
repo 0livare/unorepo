@@ -49,19 +49,23 @@ async function createWatcher(packagesInfo, args) {
   }
 
   // Add event listeners
+
+  let promise
+  async function handleChange(verb, path) {
+    if (promise) promise.then(doIt)
+    else await doIt()
+
+    async function doIt() {
+      logger.blue(`${verb.toUpperCase()}: ${path}`)
+      promise = _buildDependencyChain(path)
+      await promise
+      promise = null
+    }
+  }
+
   return watcher
-    .on('add', async path => {
-      logger.blue(`File ${path} was added`)
-      await _buildDependencyChain(path)
-    })
-    .on('change', async path => {
-      logger.blue(`File ${path} was changed`)
-      await _buildDependencyChain(path)
-    })
-    .on('unlink', async path => {
-      logger.blue(`File ${path} was removed`)
-      await _buildDependencyChain(path)
-    })
+    .on('add', path => handleChange('add', path))
+    .on('change', path => handleChange('change', path))
 }
 
 /**
