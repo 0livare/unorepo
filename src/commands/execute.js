@@ -1,5 +1,4 @@
 const emoji = require('node-emoji')
-const chalk = require('chalk')
 
 const logger = require('../util/logger')
 const getPackagesInfo = require('../util/getPackagesInfo')
@@ -8,11 +7,17 @@ const Stopwatch = require('../util/stopwatch')
 const logCommandOutput = require('../util/logCommandOutput')
 
 async function execute(command, packageName, args) {
-  let allPackagesInfo = await getPackagesInfo(packageName)
-  if (!allPackagesInfo.length) return
-
   let watch = new Stopwatch().start()
+  let allPackagesInfo = await getPackagesInfo(packageName)
 
+  if (allPackagesInfo.length) {
+    await executeScriptInPackages(command, allPackagesInfo, args)
+  }
+
+  watch.stop().log()
+}
+
+async function executeScriptInPackages(command, allPackagesInfo, args = {}) {
   let results = []
   if (args.parallel) {
     logger.startSpinner(
@@ -33,7 +38,6 @@ async function execute(command, packageName, args) {
     results,
     shouldLogMessage: args.parallel,
   })
-  watch.stop().log()
 
   async function executeAll() {
     try {
@@ -102,4 +106,4 @@ function reportStatus({command, results, shouldLogMessage}) {
   }
 }
 
-module.exports = execute
+module.exports = {command: execute, executeScriptInPackages}
