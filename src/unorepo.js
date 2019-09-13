@@ -51,4 +51,4 @@ unorepo
   .description('Link packages together via symlinks')
   .action(require('./commands/bootstrap'))
 
-unorepo.version('0.0.999').parse(process.argv)
+unorepo.version('0.0.25').parse(process.argv)
