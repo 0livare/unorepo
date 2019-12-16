@@ -23,18 +23,17 @@ async function createWatcher(packagesInfo, args) {
   let logText = globs
     ? `Watching ${JSON.stringify(globs)} from the following packages:`
     : 'Watching the following packages:'
-  logger.logArr(logText, packagesInfo.map(pkg => pkg.name), 'green')
+  logger.logArr(
+    logText,
+    packagesInfo.map(pkg => pkg.name),
+    'green',
+  )
 
   let packagesPaths = packagesInfo.map(pkg => pkg.location)
   let globbedPaths = addFileGlobToPath(globs, packagesPaths)
 
-  // prettier-ignore
   let watcher = chokidar.watch(globbedPaths, {
-    ignored: [
-      /lib|dist|build|bld/, // Ignore build output
-      /node_modules/,       // Ignore node_modules
-      /(^|[\/\\])\..+$/,    // Ignore dot files
-    ],
+    ignored: [/node_modules/],
     persistent: true,
     ignoreInitial: true,
     awaitWriteFinish: true, // Helps minimizing thrashing of watch events
