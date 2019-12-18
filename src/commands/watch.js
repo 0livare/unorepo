@@ -85,9 +85,10 @@ function changeExtensionsToGlobs(extensions) {
   if (!extensions) return null
 
   return extensions.map(ext => {
-    if (ext.startsWith('*.')) return ext
-    if (ext.startsWith('.')) return '*' + ext
-    return '*.' + ext
+    if (ext.startsWith('**/*.')) return ext
+    if (ext.startsWith('*.')) return '**/' + ext
+    if (ext.startsWith('.')) return '**/*' + ext
+    return '**/*.' + ext
   })
 }
 
