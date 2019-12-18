@@ -7,10 +7,19 @@ unorepo
   .description('Run a script every time a package changes')
   .action(require('./commands/watch'))
   .option('-s, --script <script>', 'The script to run on change', 'build')
-  .option('--ext <exts>', 'The file extensions to watch', splitList)
   .option(
     '-x, --execute <command>',
     'Instead of a script, run a command on change',
+  )
+  .option('--ext <exts>', 'The file extensions to watch', splitList)
+  .option(
+    '-i, --ignore <files>',
+    'Files/paths to be ignored',
+    'node_modules,dist,build,bld',
+  )
+  .option(
+    '-p, --include-private',
+    'If passed, private packages will also be watched',
   )
 
 unorepo
@@ -51,4 +60,4 @@ unorepo
   .description('Link packages together via symlinks')
   .action(require('./commands/bootstrap'))
 
-unorepo.version('0.0.25').parse(process.argv)
+unorepo.version('0.0.28').parse(process.argv)

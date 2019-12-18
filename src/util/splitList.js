@@ -8,7 +8,7 @@ function splitList(list) {
   }
 
   // There is no separator, only a single value
-  return list
+  return [list]
 }
 
 module.exports = splitList
