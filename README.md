@@ -68,11 +68,12 @@ uno watch --ext ts,scss
 uno watch --execute 'yarn build && yalc push --no-sig'
 ```
 
-| Option            | Default     | Description                                                                                                         |
-| ----------------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
-| `--script`, `-s`  | build       | The script from `package.json` Unorepo will run to build each package                                               |
-| `--ext`           | _ALL FILES_ | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss` |
-| `--execute`, `-x` | -           | Instead of running a predefined script on change, run an arbitrary CLI command.                                     |
+| Option            | Default                     | Description                                                                                                                                                                                                                                                                                   |
+| ----------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--script`, `-s`  | build                       | The script from `package.json` Unorepo will run to build each package                                                                                                                                                                                                                         |
+| `--ext`           | _ALL FILES_                 | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss`                                                                                                                                                                           |
+| `--execute`, `-x` | -                           | Instead of running a predefined script on change, run an arbitrary CLI command.                                                                                                                                                                                                               |
+| `--ignore`, `-i`  | node_modules,dist,build,bld | Files to ignore when watching. This should be a comma separated list of [anymatch](https://github.com/micromatch/anymatch) compatible values. This defaults to a list of common build directories. If specifying a custom value, as applicable make sure to include your own build directory. |
 
 ### `uno execute '<command>' [pkg]`
 

@@ -4,6 +4,7 @@ const chokidar = require('chokidar')
 const logger = require('../util/logger')
 const buildDependencyChain = require('../util/buildDependencyChain')
 const getPackagesInfo = require('../util/getPackagesInfo')
+const splitList = require('../util/splitList')
 
 /*
  * Watch for changes in each of the packages in this project
@@ -32,8 +33,16 @@ async function createWatcher(packagesInfo, args) {
   let packagesPaths = packagesInfo.map(pkg => pkg.location)
   let globbedPaths = addFileGlobToPath(globs, packagesPaths)
 
+  let ignoredFiles = splitList(args.ignore)
+    .map(s => {
+      if (!s) return undefined
+      if (s.startsWith('/') || s.includes('*')) return s
+      return new RegExp(s)
+    })
+    .filter(val => val)
+
   let watcher = chokidar.watch(globbedPaths, {
-    ignored: [/node_modules/],
+    ignored: ignoredFiles,
     persistent: true,
     ignoreInitial: true,
     awaitWriteFinish: true, // Helps minimizing thrashing of watch events
@@ -74,11 +83,6 @@ async function createWatcher(packagesInfo, args) {
  */
 function changeExtensionsToGlobs(extensions) {
   if (!extensions) return null
-
-  // Handle the case where only one extension was passed
-  if (typeof extensions === 'string') {
-    extensions = [extensions]
-  }
 
   return extensions.map(ext => {
     if (ext.startsWith('*.')) return ext
