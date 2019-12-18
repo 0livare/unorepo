@@ -11,7 +11,7 @@ const splitList = require('../util/splitList')
  */
 async function watch(args) {
   try {
-    const packageInfo = await getPackagesInfo()
+    const packageInfo = await getPackagesInfo(null, args.includePrivate)
     createWatcher(packageInfo, args)
   } catch (error) {
     logger.error(`There was a problem watching the project: ${error}`)
