@@ -30,7 +30,10 @@ async function createWatcher(packagesInfo, args) {
     'green',
   )
 
-  let packagesPaths = packagesInfo.map(pkg => pkg.location)
+  // The regex replace here ensures that all paths use unix separators,
+  // even if they came from a windows machine.  Chokidar requires unix
+  // separators.
+  let packagesPaths = packagesInfo.map(pkg => pkg.location.replace(/\\/g, '/'))
   let globbedPaths = addFileGlobToPath(globs, packagesPaths)
 
   let ignoredFiles = splitList(args.ignore)
