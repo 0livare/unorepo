@@ -98,10 +98,10 @@ The `pkg` parameter can be any string that is contained in the package name. For
 uno execute '<command>' login
 ```
 
-| Parameter | Required? | Default        | Description                                                               |
-| --------- | --------- | -------------- | ------------------------------------------------------------------------- |
-| `command` | true      | -              | The CLI command to run. Must be quoted, and in the form `file arguments`. |
-| `pkg`     | false     | _ALL PACKAGES_ | The name (or partial name) of the package(s) to run `command` in.         |
+| Parameter | Required? | Default        | Description                                                                          |
+| --------- | --------- | -------------- | ------------------------------------------------------------------------------------ |
+| `command` | true      | -              | The CLI command to run. Must be quoted, and in the form `file arguments`.            |
+| `pkg`     | false     | _ALL PACKAGES_ | The name (or partial name) of the package(s) to run `command` in. Optionally a list. |
 
 | Option             | Default | Description                                      |
 | ------------------ | ------- | ------------------------------------------------ |
@@ -123,10 +123,10 @@ uno run build
 uno run test login
 ```
 
-| Parameter | Required? | Default        | Description                                                        |
-| --------- | --------- | -------------- | ------------------------------------------------------------------ |
-| `script`  | true      | -              | The name of a script defined in the package.json of the package(s) |
-| `pkg`     | false     | _ALL PACKAGES_ | A name (or partial name) of the package(s) to run `script` in      |
+| Parameter | Required? | Default        | Description                                                                       |
+| --------- | --------- | -------------- | --------------------------------------------------------------------------------- |
+| `script`  | true      | -              | The name of a script defined in the package.json of the package(s).               |
+| `pkg`     | false     | _ALL PACKAGES_ | A name (or partial name) of the package(s) to run `script` in. Optionally a list. |
 
 | Option             | Default | Description                                    |
 | ------------------ | ------- | ---------------------------------------------- |
