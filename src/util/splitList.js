@@ -1,5 +1,7 @@
+const separators = [',', '||', '|', '*']
+
 function splitList(list) {
-  let separators = [',', '||', '|', '*', '-', '/', '\\']
+  if (!list) return []
 
   for (let separator of separators) {
     if (list.includes(separator)) {
