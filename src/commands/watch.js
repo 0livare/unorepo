@@ -1,16 +1,23 @@
-const path = require('path')
 const chokidar = require('chokidar')
+const {executeScriptInPackages} = require('./execute')
+const {
+  logger,
+  getPackagesInfo,
+  splitList,
+  findChangedPackage,
+  addFileGlobToPath,
+  changeExtensionsToGlobs,
+} = require('../util')
 
-const logger = require('../util/logger')
-const buildDependencyChain = require('../util/buildDependencyChain')
-const getPackagesInfo = require('../util/getPackagesInfo')
-const splitList = require('../util/splitList')
+/** The command to execute in changed packages */
+let command
 
 /*
  * Watch for changes in each of the packages in this project
  */
 async function watch(args) {
   try {
+    command = args.execute || `yarn run ${args.script}`
     const packageInfo = await getPackagesInfo(null, args.includePrivate)
     createWatcher(packageInfo, args)
   } catch (error) {
@@ -24,6 +31,7 @@ async function createWatcher(packagesInfo, args) {
   let logText = globs
     ? `Watching ${JSON.stringify(globs)} from the following packages:`
     : 'Watching the following packages:'
+
   logger.logArr(
     logText,
     packagesInfo.map(pkg => pkg.name),
@@ -36,13 +44,7 @@ async function createWatcher(packagesInfo, args) {
   let packagesPaths = packagesInfo.map(pkg => pkg.location.replace(/\\/g, '/'))
   let globbedPaths = addFileGlobToPath(globs, packagesPaths)
 
-  let ignoredFiles = splitList(args.ignore)
-    .map(s => {
-      if (!s) return undefined
-      if (s.startsWith('/') || s.includes('*')) return s
-      return new RegExp(s)
-    })
-    .filter(val => val)
+  let ignoredFiles = parseIgnoredFiles(splitList(args.ignore))
 
   let watcher = chokidar.watch(globbedPaths, {
     ignored: ignoredFiles,
@@ -51,62 +53,52 @@ async function createWatcher(packagesInfo, args) {
     awaitWriteFinish: true, // Helps minimizing thrashing of watch events
   })
 
-  async function _buildDependencyChain(changedFilePath) {
-    await buildDependencyChain({
-      path: changedFilePath,
-      script: args.script,
-      command: args.execute,
-    })
-  }
-
-  // Add event listeners
-
-  let promise
-  async function handleChange(verb, path) {
-    if (promise) promise.then(doIt)
-    else await doIt()
-
-    async function doIt() {
-      logger.blue(`${verb.toUpperCase()}: ${path}`)
-      promise = _buildDependencyChain(path)
-      await promise
-      promise = null
-    }
-  }
-
-  return watcher
-    .on('add', path => handleChange('add', path))
-    .on('change', path => handleChange('change', path))
+  return watcher.on('add', collectChanges).on('change', collectChanges)
 }
 
 /**
- * Change strings from extension format to
- * glob format (*.txt).
- * @param {Array[string]} extensions
+ * Go through the array looking for strings that represent
+ * file paths, globs, and regex.  Pass through the former two
+ * and turn regex strings in to RegExp objects.  Filter out
+ * any invalid strings
  */
-function changeExtensionsToGlobs(extensions) {
-  if (!extensions) return null
-
-  return extensions.map(ext => {
-    if (ext.startsWith('**/*.')) return ext
-    if (ext.startsWith('*.')) return '**/' + ext
-    if (ext.startsWith('.')) return '**/*' + ext
-    return '**/*.' + ext
-  })
+function parseIgnoredFiles(ignoredPathsGlobsAndRegex) {
+  return ignoredPathsGlobsAndRegex
+    .map(s => {
+      if (!s) return null
+      if (s.startsWith('/') || s.includes('*')) return s
+      return new RegExp(s)
+    })
+    .filter(val => val)
 }
 
-function addFileGlobToPath(globs, paths) {
-  if (!globs || !globs.length) return paths
+let timeoutId
+let paths = []
+function collectChanges(path) {
+  paths.push(path)
+  logger.blue(`CHANGE: ${path}`)
 
-  let globbedPaths = []
-
-  for (let filepath of paths) {
-    for (let glob of globs) {
-      globbedPaths.push(path.join(filepath, glob))
-    }
+  if (timeoutId) {
+    clearTimeout(timeoutId)
   }
 
-  return globbedPaths
+  timeoutId = setTimeout(() => {
+    timeoutId = null
+    runCommandInPackages(paths)
+    paths = []
+  }, 200)
+}
+
+function runCommandInPackages(paths) {
+  // Store the package infos by name to ensure there are no duplicates
+  let packageInfosByName = paths
+    .map(findChangedPackage)
+    .reduce((accum, curr) => {
+      accum[curr.name] = curr
+      return accum
+    }, {})
+
+  executeScriptInPackages(command, Object.values(packageInfosByName))
 }
 
 module.exports = watch
