@@ -22,6 +22,7 @@ async function watch(args) {
     createWatcher(packageInfo, args)
   } catch (error) {
     logger.error(`There was a problem watching the project: ${error}`)
+    throw error
   }
 }
 
@@ -74,22 +75,31 @@ function parseIgnoredFiles(ignoredPathsGlobsAndRegex) {
 
 let timeoutId
 let paths = []
+let running = Promise.resolve()
+
 function collectChanges(path) {
   paths.push(path)
   logger.blue(`CHANGE: ${path}`)
 
-  if (timeoutId) {
-    clearTimeout(timeoutId)
-  }
+  if (timeoutId) clearTimeout(timeoutId)
 
   timeoutId = setTimeout(() => {
     timeoutId = null
-    runCommandInPackages(paths)
-    paths = []
+
+    // This will cause `runCommandInPackages` to run once
+    // for every timeout where there are changes, but because
+    // `runCommandInPackages` will pull all the currently
+    // stored paths, remove duplicates, and then run those
+    // packages, we are not duplicating the work if the same
+    // package changes more than once while the previous
+    // build was still running.
+    running = running.then(runCommandInPackages)
   }, 200)
 }
 
-function runCommandInPackages(paths) {
+async function runCommandInPackages() {
+  if (!paths.length) return
+
   // Store the package infos by name to ensure there are no duplicates
   let packageInfosByName = paths
     .map(findChangedPackage)
@@ -98,7 +108,18 @@ function runCommandInPackages(paths) {
       return accum
     }, {})
 
-  executeScriptInPackages(command, Object.values(packageInfosByName))
+  paths = []
+  let packages = Object.values(packageInfosByName)
+
+  if (packages.length > 1) {
+    logger.log('')
+    logger.logArr(
+      `Running "${command}" in ${packages.length} packages`,
+      packages.map(info => info.name),
+    )
+  }
+
+  await executeScriptInPackages(command, packages)
 }
 
 module.exports = watch
