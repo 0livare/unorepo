@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const unorepo = require('commander')
 const splitList = require('./util/splitList')
 

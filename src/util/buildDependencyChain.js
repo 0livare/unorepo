@@ -1,10 +1,7 @@
 const execa = require('execa')
 const executeScriptInPackages = require('../commands/execute')
   .executeScriptInPackages
-
-const getPackageJson = require('./getPackageJson')
-const findNearestNodeModule = require('./findNearestNodeModule')
-const runCommandInPackage = require('./runCommandInPackage')
+const findChangedPackage = require('./findChangedPackage')
 
 /**
  * Build the package that contains the changed file, and then
@@ -15,17 +12,11 @@ const runCommandInPackage = require('./runCommandInPackage')
  * is passed, it will be run instead of the `script` passed
  * `scriptToRunOnChange`
  */
-async function buildDependencyChain({path, script, command}) {
-  const changedPackagePath = findNearestNodeModule(path)
-  const changedPackageName = getPackageJson(changedPackagePath).name
-  command = command || `yarn run ${script}`
-
-  let changedPackageInfo = {
-    name: changedPackageName,
-    location: changedPackagePath,
-  }
-
-  const dependentPackageInfos = await findDependentPackages(changedPackageName)
+async function buildDependencyChain({path, command}) {
+  let changedPackageInfo = findChangedPackage(path)
+  const dependentPackageInfos = await findDependentPackages(
+    changedPackageInfo.name,
+  )
   let allPackageInfos = [changedPackageInfo, ...dependentPackageInfos]
 
   await executeScriptInPackages(command, allPackageInfos)

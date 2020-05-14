@@ -19,19 +19,13 @@
   "main": "src/unorepo.js",
   "private": false,
   "bin": {
-    "uno": "dist/unorepo.js"
+    "uno": "src/unorepo.js"
   },
   "files": [
-    "dist/*"
+    "src/**/*.js"
   ],
   "scripts": {
-    "execute": "chmod +x dist/unorepo.js",
-    "build": "webpack",
-    "postbuild": "yarn execute",
-    "watch": "chokidar \"src/**/*.js\" -c \"yarn build\" --initial",
-    "preprod": "rm -rf dist/*",
-    "prod": "NODE_ENV=production webpack",
-    "postprod": "yarn execute",
+    "start": "node src/unorepo.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -41,15 +35,5 @@
     "execa": "^2.0.3",
     "node-emoji": "^1.10.0",
     "ora": "^3.4.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "babel-loader": "^8.0.6",
-    "chokidar-cli": "^1.2.2",
-    "regenerator-runtime": "^0.13.3",
-    "webpack": "^4.37.0",
-    "webpack-cli": "^3.3.6",
-    "webpack-node-externals": "^1.7.2"
   }
 }
