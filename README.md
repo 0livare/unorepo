@@ -50,9 +50,7 @@ The overlapping terminology is very confusing, so in attempt to be as clear as p
 
 ### `uno watch`
 
-Build a package and its dependents every time the package changes.
-
-When a change is detected in a particular package, that package will be built and then each other package in the project that depends on the changed package will also be built. This ensures that all your packages are constantly up to date as you're developing them.
+Watch all packages, running a script inside each modified package.
 
 ```bash
 # Watch all file types for all changes, run 'yarn build' on change
