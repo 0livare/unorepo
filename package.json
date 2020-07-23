@@ -37,6 +37,6 @@
     "ora": "^3.4.0"
   },
   "peerDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "3.x"
   }
 }
