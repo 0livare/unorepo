@@ -27,7 +27,7 @@ async function watch(args) {
 }
 
 async function createWatcher(packagesInfo, args) {
-  let globs = changeExtensionsToGlobs(args.ext)
+  let globs = changeExtensionsToGlobs(args.files)
 
   let logText = globs
     ? `Watching ${JSON.stringify(globs)} from the following packages:`
