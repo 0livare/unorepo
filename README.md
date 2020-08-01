@@ -172,6 +172,9 @@ yarn
 # Build the project
 yarn build
 
+# Run tests
+yarn test
+
 # Allow running "uno" in the terminal to run this project
 yarn link
 
