@@ -1,3 +1,5 @@
+const path = require('path')
+
 const {
   changeExtensionsToGlobs,
   addFileGlobToPath,
@@ -19,12 +21,14 @@ describe('globs.addFileGlobToPath', () => {
   describe('when passing globs', () => {
     it('should join each of a number of globs to the end of a number of paths', () => {
       const globs = ['**/*.ts', '**/*.scss']
-      const paths = ['/some/path/packages/package']
+      const paths = ['some/path/packages/package']
 
       const result = addFileGlobToPath(globs, paths)
 
       expect(result.length).toBe(2)
-      expect(result[0]).toBe('/some/path/packages/package/**/*.ts')
+      expect(result[0]).toBe(
+        path.join('some', 'path', 'packages', 'package', '**', '*.ts'),
+      )
     })
   })
 })
