@@ -60,7 +60,7 @@ uno watch
 uno watch --script local
 
 # Watch only .ts and .scss files for change
-uno watch --ext ts,scss
+uno watch --files ts,scss
 
 # Run a custom CLI command on change
 uno watch --execute 'yarn build && yalc push --no-sig'
@@ -69,7 +69,7 @@ uno watch --execute 'yarn build && yalc push --no-sig'
 | Option                    | Default                     | Description                                                                                                                                                                                                                                                                                  |
 | ------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--script`, `-s`          | build                       | The script from `package.json` Unorepo will run to build each package                                                                                                                                                                                                                        |
-| `--ext`                   | _ALL FILES_                 | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss`                                                                                                                                                                          |
+| `--files`, `-f`           | _ALL FILES_                 | The file extensions to watch within the packages. To pass multiple extensions, separate with commas; e.g. `ts,scss`                                                                                                                                                                          |
 | `--execute`, `-x`         | -                           | Instead of running a predefined script on change, run an arbitrary CLI command                                                                                                                                                                                                               |
 | `--ignore`, `-i`          | node_modules,dist,build,bld | Files to ignore when watching. This should be a comma separated list of [anymatch](https://github.com/micromatch/anymatch) compatible values. This defaults to a list of common build directories. If specifying a custom value, as applicable make sure to include your own build directory |
 | `--include-private`, `-p` | false                       | Also watch private packages                                                                                                                                                                                                                                                                  |
@@ -171,6 +171,9 @@ yarn
 
 # Build the project
 yarn build
+
+# Run tests
+yarn test
 
 # Allow running "uno" in the terminal to run this project
 yarn link

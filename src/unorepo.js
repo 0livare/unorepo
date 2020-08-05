@@ -13,7 +13,7 @@ unorepo
     '-x, --execute <command>',
     'Instead of a script, run a command on change',
   )
-  .option('--ext <exts>', 'The file extensions to watch', splitList)
+  .option('-f, --files <exts>', 'The file extensions to watch', splitList)
   .option(
     '-i, --ignore <files>',
     'Files/paths to be ignored',
