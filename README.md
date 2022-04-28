@@ -169,9 +169,6 @@ cd unorepo
 # Install dependencies
 yarn
 
-# Build the project
-yarn build
-
 # Run tests
 yarn test
 
