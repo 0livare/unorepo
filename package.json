@@ -1,23 +1,11 @@
 {
   "name": "unorepo",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A tool for managing a monorepo via lerna and yarn workspaces",
-  "author": "Zach Posten <https://github.com/zposten>",
+  "author": "Zach Olivare <https://github.com/0livare>",
   "license": "ISC",
-  "repository": "https://github.com/zposten/unorepo",
-  "keywords": [
-    "mono",
-    "repo",
-    "monorepo",
-    "mono-repo",
-    "repository",
-    "management",
-    "modules",
-    "build",
-    "watch"
-  ],
+  "repository": "https://github.com/0livare/unorepo",
   "main": "src/unorepo.js",
-  "private": false,
   "bin": {
     "uno": "src/unorepo.js"
   },
@@ -30,7 +18,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "chokidar": "^2.0.4",
+    "chokidar": "^3.5.3",
     "commander": "^2.19.0",
     "execa": "^2.0.3",
     "node-emoji": "^1.10.0",
@@ -42,5 +30,16 @@
   "devDependencies": {
     "jest": "^26.2.2",
     "prettier": "^2.0.5"
-  }
+  },
+  "keywords": [
+    "mono",
+    "repo",
+    "monorepo",
+    "mono-repo",
+    "repository",
+    "management",
+    "modules",
+    "build",
+    "watch"
+  ]
 }
